@@ -1,4 +1,5 @@
 "use client"
+import { YourDocs } from "@/components";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 
@@ -42,7 +43,7 @@ export default function Home() {
         <div className="bg-slate-900 h-[200px] flex flex-col justify-center items-center">
           <p className="">Start a new document</p>
           <div>
-            <div className="h-[100px] w-[110px] my-4 flex justify-center items-center bg-black">
+            <div className="h-[100px] w-[110px] my-4 flex justify-center items-center bg-black cursor-pointer hover:border-2 hover:border-slate-800">
             <Image
                 src="/plus.png"
                 width={50}
@@ -55,6 +56,7 @@ export default function Home() {
           </div>
         </div>
       </div>
+      <YourDocs/>
     </main>
   );
 }
