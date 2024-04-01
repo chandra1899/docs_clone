@@ -4,7 +4,7 @@ import React from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-const Editor = ({value, setValue}:any) => {
+const Editor = ({value, setValue, socket}:any) => {
     const {id} = useParams()
     const handleOnChange = async (e:any)=>{
       let res=await axios.post('/api/savedocument',{
@@ -12,7 +12,8 @@ const Editor = ({value, setValue}:any) => {
         content : e
       })
       if(res.status === 200){
-        setValue(e)
+        // setValue(e)
+        socket.emit('change', id, e)
       }
       
     }

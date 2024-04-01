@@ -33,6 +33,30 @@ const page = () => {
       setDocumentName(res.data.newName==='Untitled Document'?'':`${res.data.newName}`)
     }
   }
+  const socketFunction=async ()=>{
+    let email=session?.user?.email
+    if(!email) return ;
+    await socket.emit('joinRoom', id,email);
+    await socket.on("connect", async () => {
+        console.log("SOCKET CONNECTED!", socket.id);
+      });
+
+      socket.on('changed', function (data) {
+        setValue(data)
+      });
+
+      socket.on('error', function (data) {
+        console.log(data || 'error');
+      });
+
+      socket.on('connect_failed', function (data) {
+        console.log(data || 'connect_failed');
+      });
+    }
+
+  useEffect(()=>{
+    socketFunction()
+  },[session,socket])
   useEffect(()=>{
     fetchDetailOfRoom()
   },[session])
@@ -73,7 +97,7 @@ const page = () => {
     </div>
         </div>
       </div>
-        <Editor value = {value} setValue = {setValue} />
+        <Editor value = {value} setValue = {setValue} socket = {socket} />
     </div>
   )
 }
