@@ -1,14 +1,21 @@
-"use client"
-import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useParams } from 'next/navigation';
+import React from 'react';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-const Editor = () => {
-    const [value, setValue] = useState('');
-    // useEffect(()=>{
-    //     console.log(value);
-        
-    // },[value])
+const Editor = ({value, setValue}:any) => {
+    const {id} = useParams()
+    const handleOnChange = async (e:any)=>{
+      let res=await axios.post('/api/savedocument',{
+        roomName : id,
+        content : e
+      })
+      if(res.status === 200){
+        setValue(e)
+      }
+      
+    }
     const fontSizeArr = ['8px','9px','10px','12px','14px','16px','20px','24px','32px','42px','54px','68px','84px','98px'];
 
     const Size = Quill.import('attributors/style/size');
@@ -60,7 +67,7 @@ const Editor = () => {
        value={value} 
        modules={modules}
        formats={formats}
-       onChange={setValue} />
+       onChange={handleOnChange} />
     </div>
   )
 }

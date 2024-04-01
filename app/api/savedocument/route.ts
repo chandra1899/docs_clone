@@ -4,14 +4,13 @@ import Document from '@/models/document'
 
 export async function POST(req:Request){
     try {
-        const {email}=await req.json()
+        const {roomName, content}=await req.json()
+        // console.log("roomName", roomName);
+        // console.log("content", content);
         
         await connectMongoDB()
-        const documents = await Document.find({
-            ownedBy : email
-            //shared with you
-        }) 
-        return NextResponse.json({documents},{status:200})
+        const document = await Document.findOneAndUpdate({ roomName }, { content }) 
+        return NextResponse.json({},{status:200})
     } catch (error) {
         console.log(error);
         return NextResponse.json({message:'server error'},{status:500})

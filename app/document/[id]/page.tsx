@@ -1,10 +1,30 @@
 "use client"
 import { Editor } from '@/components';
+import axios from 'axios';
+import { useSession } from 'next-auth/react';
 import Image from 'next/image'
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
 const socket =io("http://localhost:3001/");
 
 const page = () => {
+  const {status,data:session} =useSession()
+  const {id} = useParams()
+  const [value, setValue] = useState('');
+  const fetchDetailOfRoom =async ()=>{
+    let res=await axios.post('/api/roomdetails',{
+      roomName : id,
+    })
+    if(res.status === 200){
+      console.log(res);
+      
+      setValue(res.data.document.content)
+    }
+  }
+  useEffect(()=>{
+    fetchDetailOfRoom()
+  },[session])
   return (
     <div className='bg-slate-900'>
       <div className="flex flex-row justify-between items-center h-[50px] bg-black">
@@ -35,7 +55,7 @@ const page = () => {
     </div>
         </div>
       </div>
-        <Editor/>
+        <Editor value = {value} setValue = {setValue} />
     </div>
   )
 }

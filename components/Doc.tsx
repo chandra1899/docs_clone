@@ -1,11 +1,13 @@
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
+import { useRouter } from 'next/navigation'
 import React from 'react'
 
 const Doc = ({document}:any) => {
   const {status,data:session} =useSession()
+  const router = useRouter();
   return (
-    <div className='flex flex-row items-center justify-between w-[800px] text-[0.8rem] font-normal my-1 h-[40px] hover:bg-slate-900 cursor-pointer rounded-l-full rounded-r-full'>
+    <div className='flex flex-row items-center justify-between w-[800px] text-[0.8rem] font-normal my-1 h-[40px] hover:bg-slate-900 cursor-pointer rounded-l-full rounded-r-full' onClick={()=>{router.push(`/document/${document.roomName}`)}} >
       <div className='flex flex-row items-center justify-center w-[300px]'>
       <Image
         src="/docs_img.png"
