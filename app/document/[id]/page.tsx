@@ -1,10 +1,11 @@
+"use client"
+import { Editor } from '@/components';
 import Image from 'next/image'
-import React from 'react'
 
 const page = () => {
   return (
-    <div>
-      <div className="flex flex-row justify-between items-center h-[50px]">
+    <div className='bg-slate-900'>
+      <div className="flex flex-row justify-between items-center h-[50px] bg-black">
         <div className="flex flex-row relative items-center">
         <Image
         src="/docs_img.png"
@@ -13,9 +14,9 @@ const page = () => {
         alt="docs_img"
         className="ml-3"
       />
-      <div className='flex flex-col justify-center ml-3 text-[0.9rem] font-normal'>
+      <div className='flex flex-col justify-center ml-3 font-normal'>
         <p className=''>Untitled document</p>
-        <div className='flex flex-row justify-between items-center'>
+        <div className='flex flex-row justify-between items-center text-[0.9rem]'>
             <p className='mr-3'>File</p>
             <p className='mr-3'>Edit</p>
             <p className='mr-3'>View</p>
@@ -32,6 +33,7 @@ const page = () => {
     </div>
         </div>
       </div>
+        <Editor/>
     </div>
   )
 }
