@@ -1,11 +1,53 @@
 "use client"
 import { YourDocs } from "@/components";
+import { yourDocuments } from "@/store/atoms/yourDocuments";
+import axios from "axios";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useSetRecoilState } from "recoil";
 
 export default function Home() {
-  // const {status,data:session} =useSession()
-  // console.log(status);
+  const {status,data:session} =useSession()
+  const setYourDocuments=useSetRecoilState(yourDocuments)
+  const router = useRouter();
+    const generateRandomCharactors = ()=>{
+      let allChar="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+      let randomCharactors = "";
+
+      for(let i=0;i<15;i++){
+          let randomNum = Math.floor(Math.random() * allChar.length);
+          randomCharactors+=allChar[randomNum];
+      }
+      return randomCharactors
+    }
+    const createNewDocument =async ()=>{
+        const roomName = generateRandomCharactors();
+        let email=session?.user?.email
+        if(!email) return ;
+        let res=await axios.post('/api/createDocument',{
+          email,roomName,
+        })
+        if(res.status === 200){
+          router.push(`/document/${roomName}`);
+        }
+    }
+
+    const fetchDocuments =async ()=>{
+        let email=session?.user?.email
+        if(!email) return ;
+        let res=await axios.post(`/api/mydocuments`,{
+          email
+        })
+        if(res.status === 200 && res?.data?.documents != undefined){
+          setYourDocuments(res.data.documents)
+        }
+    }
+
+    useEffect(()=>{
+      fetchDocuments();
+    },[session])
   
   return (
     <main>
@@ -43,7 +85,7 @@ export default function Home() {
         <div className="bg-slate-900 h-[200px] flex flex-col justify-center items-center">
           <p className="">Start a new document</p>
           <div>
-            <div className="h-[100px] w-[110px] my-4 flex justify-center items-center bg-black cursor-pointer hover:border-2 hover:border-slate-800">
+            <div className="h-[100px] w-[110px] my-4 flex justify-center items-center bg-black cursor-pointer hover:border-2 hover:border-slate-800" onClick={createNewDocument} >
             <Image
                 src="/plus.png"
                 width={50}

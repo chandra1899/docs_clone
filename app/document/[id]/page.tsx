@@ -1,6 +1,8 @@
 "use client"
 import { Editor } from '@/components';
 import Image from 'next/image'
+import { io } from "socket.io-client";
+const socket =io("http://localhost:3001/");
 
 const page = () => {
   return (
