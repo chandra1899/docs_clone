@@ -12,14 +12,25 @@ const page = () => {
   const {status,data:session} =useSession()
   const {id} = useParams()
   const [value, setValue] = useState('');
+  const [documentName, setDocumentName] = useState('');
   const fetchDetailOfRoom =async ()=>{
     let res=await axios.post('/api/roomdetails',{
       roomName : id,
     })
     if(res.status === 200){
-      console.log(res);
+      // console.log(res);
       
       setValue(res.data.document.content)
+      setDocumentName(res.data.document.documentName)
+    }
+  }
+  const updateName = async (e:any)=>{    
+    const newName = e.target.value===''?'Untitled Document':`${e.target.value}`
+    let res=await axios.post('/api/renamedocument',{
+      newName, roomName : id
+    })
+    if(res.status === 200){
+      setDocumentName(res.data.newName==='Untitled Document'?'':`${res.data.newName}`)
     }
   }
   useEffect(()=>{
@@ -37,7 +48,14 @@ const page = () => {
         className="ml-3"
       />
       <div className='flex flex-col justify-center ml-3 font-normal'>
-        <p className=''>Untitled document</p>
+        <input 
+        type="text"
+        // value = {documentName===""?`Untitled document`:`${documentName}`}
+        value = {documentName}
+        onChange={updateName}
+        placeholder='document Name'
+        className='bg-black w-auto'
+         />
         <div className='flex flex-row justify-between items-center text-[0.9rem]'>
             <p className='mr-3'>File</p>
             <p className='mr-3'>Edit</p>
