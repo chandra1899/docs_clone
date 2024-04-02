@@ -18,7 +18,7 @@ const Doc = ({document}:any) => {
       />
       <p>{document?.documentName}</p>
       </div>
-      <p>{(document.ownedBy===session?.user?.email)?'me':`${session?.user?.email}`}</p>
+      <p>{(document?.ownedBy===session?.user?.email)?'me':`${session?.user?.email}`}</p>
       <p>84-84-4848</p>
       <Image
         src="/dot_menu.png"

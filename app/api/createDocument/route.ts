@@ -16,7 +16,7 @@ export async function POST(req:Request){
             documentName : "Untitled Document"
         })
         
-        return NextResponse.json({documentId : document._id},{status:200})
+        return NextResponse.json({documentId : document?._id},{status:200})
     } catch (error) {
         console.log(error);
         return NextResponse.json({message:'server error'},{status:500})

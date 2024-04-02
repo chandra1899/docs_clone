@@ -1,27 +1,31 @@
+"use client"
 import axios from 'axios';
 import { useParams } from 'next/navigation';
-import React from 'react';
-import ReactQuill, { Quill } from 'react-quill';
-import 'react-quill/dist/quill.snow.css';
+import React, { useEffect } from 'react';
+import 'quill/dist/quill.snow.css';
+
+import dynamic from 'next/dynamic';
+import { useSession } from 'next-auth/react';
+
+const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 
 const Editor = ({value, setValue, socket}:any) => {
+    // const {status,data:session} =useSession()
     const {id} = useParams()
     const handleOnChange = async (e:any)=>{
+      // let email=session?.user?.email
+      // if(!email) return ;
       let res=await axios.post('/api/savedocument',{
         roomName : id,
         content : e
       })
       if(res.status === 200){
-        // setValue(e)
-        socket.emit('change', id, e)
+        await socket.emit('change', id, e)
       }
-      
     }
+
     const fontSizeArr = ['8px','9px','10px','12px','14px','16px','20px','24px','32px','42px','54px','68px','84px','98px'];
 
-    const Size = Quill.import('attributors/style/size');
-    Size.whitelist = fontSizeArr;
-    Quill.register(Size, true);
     const COLORS = [
         "#000000", "#e60000", "#ff9900", "#ffff00", "#008a00", "#0066cc", "#9933ff",
         "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff",
@@ -45,30 +49,26 @@ const Editor = ({value, setValue, socket}:any) => {
         ],
       }
     
-      const formats = [
-        'header',
-        'font',
-        'size',
-        'bold',
-        'italic',
-        'underline',
-        'strike',
-        'blockquote',
-        'list',
-        'bullet',
-        'indent',
-        'link',
-        'image',
-        'color',
-      ]
+      const formats = ['header','font','size','bold','italic','underline','strike','blockquote','list','bullet','indent','link','image','color',]
+
+      useEffect(() => {
+        const Quill = require('react-quill');
+        const Size = Quill.Quill.import('attributors/style/size');
+        Size.whitelist = fontSizeArr;
+        Quill.Quill.register(Size, true);
+      }, []);
+
   return (
-    <div className='bg-black max-w-[800px] mx-auto'>
-       <ReactQuill 
-       theme="snow" 
-       value={value} 
-       modules={modules}
-       formats={formats}
-       onChange={handleOnChange} />
+    <div className=''>
+      {typeof window !== 'undefined' && (
+        <QuillEditor 
+        theme="snow" 
+        value={value} 
+        modules={modules}
+        formats={formats}
+        onChange={setValue}
+        />
+      )}
     </div>
   )
 }

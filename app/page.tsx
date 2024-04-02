@@ -2,7 +2,7 @@
 import { YourDocs } from "@/components";
 import { yourDocuments } from "@/store/atoms/yourDocuments";
 import axios from "axios";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -76,6 +76,16 @@ export default function Home() {
        placeholder="Search"
        className={`bg-transparent h-[80%] w-[50vw] border-[#4125f1] border-[0.1rem] border-solid text-white placeholder:text-secondary placeholder:opacity-60 py-2 px-12  rounded-lg outline-none focus:border-[#8228f0] focus:border-[0.1rem] focus:border-solid  font-medium my-2`}
        />
+    </div>
+    <div className="flex flex-row justify-center items-center" onClick={async()=>{await signOut()}} >
+      <Image
+        src="/logout.png"
+        width={30}
+        height={30}
+        alt="search"
+        className="mr-2 cursor-pointer"
+      />
+      <p className="text-red-600 hover:text-red-700 cursor-pointer">Sign Out</p>
     </div>
     <div className="flex flex-row justify-center items-center  rounded-full h-[80%] w-[60px] bg-[#6029e1] mr-5 text-[1.5rem] font-mono">
       f

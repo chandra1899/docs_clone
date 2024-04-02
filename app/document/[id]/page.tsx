@@ -9,6 +9,7 @@ import { io } from "socket.io-client";
 const socket =io("http://localhost:3001/");
 
 const page = () => {
+  const [arrivalContent, setArrivalContent] = useState(null);  
   const {status,data:session} =useSession()
   const {id} = useParams()
   const [value, setValue] = useState('');
@@ -42,7 +43,7 @@ const page = () => {
       });
 
       socket.on('changed', function (data) {
-        setValue(data)
+        setArrivalContent(data)
       });
 
       socket.on('error', function (data) {
@@ -60,9 +61,13 @@ const page = () => {
   useEffect(()=>{
     fetchDetailOfRoom()
   },[session])
+  useEffect(() => {
+    arrivalContent && setValue(arrivalContent)
+  }, [arrivalContent]);
+
   return (
     <div className='bg-slate-900'>
-      <div className="flex flex-row justify-between items-center h-[50px] bg-black">
+      <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black">
         <div className="flex flex-row relative items-center">
         <Image
         src="/docs_img.png"
