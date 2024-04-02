@@ -6,10 +6,10 @@ import Image from 'next/image'
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { io } from "socket.io-client";
-const socket =io("http://localhost:3001/");
 
 const page = () => {
   const [arrivalContent, setArrivalContent] = useState(null);  
+  const [socket, setSocket] = useState();
   const {status,data:session} =useSession()
   const {id} = useParams()
   const [value, setValue] = useState('');
@@ -64,6 +64,14 @@ const page = () => {
   useEffect(() => {
     arrivalContent && setValue(arrivalContent)
   }, [arrivalContent]);
+
+  useEffect(()=>{
+    const s = io("http://localhost:3001/");
+    setSocket(s)
+    return ()=>{
+      s.disconnect()
+    }
+  }, [])
 
   return (
     <div className='bg-slate-900'>

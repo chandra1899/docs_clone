@@ -1,7 +1,7 @@
 "use client"
 import axios from 'axios';
 import { useParams } from 'next/navigation';
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import 'quill/dist/quill.snow.css';
 import Quill from 'quill'
 import dynamic from 'next/dynamic';
@@ -12,6 +12,7 @@ import { useSession } from 'next-auth/react';
 const Editor = ({value, setValue, socket}:any) => {
     // const {status,data:session} =useSession()
     const {id} = useParams()
+    const [quill, setQuill] = useState()
     // const handleOnChange = async (e:any)=>{
     //   // let email=session?.user?.email
     //   // if(!email) return ;
@@ -45,15 +46,53 @@ const Editor = ({value, setValue, socket}:any) => {
         ['clean']                                         // remove formatting button
       ];
 
+      useEffect(()=>{
+        if(socket == null || quill == null) return 
+
+        socket.once('load_document', (document)=>{
+          quill.setContents(document)
+          quill.enable()
+        })
+        socket.emit("get_document", id)
+      }, [socket, quill, id])
+
+      useEffect(()=>{
+        if(socket == null || quill == null) return 
+        const handler = (delta:any)=>{
+          quill.updateContents(delta)
+        }
+        socket.on('recieved_changes',handler)
+        
+        return ()=>{
+          socket.off('recieved_changes',handler)
+         
+        }
+      },[socket, quill])
+
+      useEffect(()=>{
+        if(socket == null || quill == null) return 
+        const handler = (delta:any, oldDelta:any, source:any)=>{
+          if(source !== 'user') return 
+          socket.emit('send-changes', delta)
+        }
+        
+        quill?.on('text-change',handler)
+        return ()=>{
+          quill?.off('text-change',handler)
+        }
+      },[socket, quill])
+
       const wrapperRef = useCallback((wrapper:any) => {
         if(wrapper == null) return 
         wrapper.innerHTML = ''
         const editor = document.createElement("div")
         wrapper.append(editor)
-        new Quill(editor , { theme : "snow", modules : {
+        const q = new Quill(editor , { theme : "snow", modules : {
           toolbar : Toolbar_Options
         } } )
-
+        q.disable()
+        q.setText('loading...')
+        setQuill(q)
       }, []);
 
   return (
