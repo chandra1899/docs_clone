@@ -4,9 +4,8 @@ import Document from '@/models/document'
 
 export async function POST(req:Request){
     try {
-        const {roomName}=await req.json()
-        // console.log("roomName", roomName);
-        
+        const { roomName } = await req.json();
+        console.log("roomame", roomName);
         await connectMongoDB()
         const document = await Document.findOne({
             roomName

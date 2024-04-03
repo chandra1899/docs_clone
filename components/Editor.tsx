@@ -49,12 +49,28 @@ const Editor = ({value, setValue, socket}:any) => {
       useEffect(()=>{
         if(socket == null || quill == null) return 
 
-        socket.once('load_document', (document)=>{
-          quill.setContents(document)
+        socket.on('load_document', (data:any)=>{
+          console.log('load document data', data);
+          
+          quill.setContents(data)
           quill.enable()
         })
         socket.emit("get_document", id)
       }, [socket, quill, id])
+
+      useEffect(()=>{
+        if(socket == null || quill == null) return 
+
+        const interval = setInterval(()=>{
+          // console.log();
+          
+          socket.emit('save_document', quill.getContents().ops[0].insert)
+        },2000)
+
+        return ()=>{
+          clearInterval(interval)
+        }
+      }, [socket, quill])
 
       useEffect(()=>{
         if(socket == null || quill == null) return 
