@@ -62,15 +62,15 @@ body {
 .ql-editor {
   width: 8.5in;
   min-height: 11in;
-  padding: 1in;
-  margin: 1rem;
+  padding: 0.8in !important;
+  margin: 1rem ;
   box-shadow: 0 0 5px 0 rgba(1, 1, 1, 0.5);
   background-color: black;
 }
 
 .ql-container.ql-snow {
-  border: none;
-  display: fex;
+  border: none !important;
+  display: flex;
   justify-content: center;
 }
 
@@ -79,11 +79,15 @@ body {
   justify-content: center;
   position: sticky;
   top: 0;
+  border-radius: 40px 40px 40px 40px;
+  margin: 1rem 1rem 0 1rem;
   z-index: 1;
-  /* background-color: ; */
-  border: none;
+  background-color: #2c2c2c;
+  border: none !important;
   /* box-shadow: 0 0 5px 0 rgba(0, 0, 0 0.5); */
 }
+
+/* .ql-container.ql-snow{ border: none !important;} */
 
 @page {
   margin: 1in;

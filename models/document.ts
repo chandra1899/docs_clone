@@ -10,7 +10,7 @@ const documentSchema=new Schema({
         required : true
     },
     content : {
-        type : String,
+        type : Object,
     },
     documentName : {
         type : String,

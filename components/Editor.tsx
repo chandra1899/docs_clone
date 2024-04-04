@@ -62,9 +62,9 @@ const Editor = ({value, setValue, socket}:any) => {
         if(socket == null || quill == null) return 
 
         const interval = setInterval(()=>{
-          // console.log();
+          console.log('dfdf',quill.getContents());
           
-          socket.emit('save_document', quill.getContents().ops[0].insert)
+          socket.emit('save_document', quill.getContents())
         },2000)
 
         return ()=>{
