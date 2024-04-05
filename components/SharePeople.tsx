@@ -1,7 +1,8 @@
 import Image from 'next/image'
-import React from 'react'
+import React, { useState } from 'react'
 
 const SharePeople = () => {
+    const [notifyOn, setNotifyOn] = useState(true)
   return (
     <div>
       <div className='flex flex-row justify-between items-center'>
@@ -32,10 +33,15 @@ const SharePeople = () => {
                 <option value="option3">remove access</option>
             </select>
       </div>
-      <input id='notify' className='mx-3 my-2 h-[18px] w-[18px] cursor-pointer' type="checkbox" />
+      <input id='notify'
+       className='mx-3 my-2 h-[18px] w-[18px] cursor-pointer'
+       type="checkbox"
+       checked={notifyOn}
+       onChange={()=>setNotifyOn((pre)=>!pre)}
+         />
       <label htmlFor="notify" className='text-[0.9rem] font-normal'>Notify people</label>
-      <textarea className='bg-black text-white w-[90%] rounded-xl border-2 border-blue-600 h-[150px] p-3 ml-4 my-4' placeholder='Message' name="" id=""></textarea>
-      <div className='flex flex-row justify-between items-center mx-4'>
+      {notifyOn && <textarea className='bg-black text-white w-[90%] rounded-xl border-2 border-blue-600 h-[150px] p-3 ml-4 my-4' placeholder='Message' name="" id=""></textarea>}
+      <div className={`flex flex-row justify-between items-center mx-4 ${notifyOn?``:`mt-5`}`}>
         <Image
                 src="/link.png"
                 width={35}
@@ -45,7 +51,8 @@ const SharePeople = () => {
             />
             <div className='flex flex-row justify-center items-center'>
                 <p className='text-blue-600 h-[40px] w-[80px] hover:bg-slate-800 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full mx-3'>cancel</p>
-                <p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full'>Send</p>
+                {notifyOn?<p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full'>Send</p>
+                :<p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full'>Share</p>}
             </div>
       </div>
     </div>
