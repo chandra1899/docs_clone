@@ -4,6 +4,11 @@ import GoogleLogin from './Google'
 import YourDocs from './YourDocs'
 import Doc from './Doc'
 import Editor from './Editor'
+import ShareBox from './ShareBox'
+import BackDrop from './BackDrop'
+import ShareHome from './ShareHome'
+import SharePeople from './SharePeople'
+import ShareSettings from './ShareSettings'
 
 export {
     LoginForm,
@@ -11,5 +16,10 @@ export {
     GoogleLogin,
     YourDocs,
     Doc,
-    Editor
+    Editor,
+    ShareBox,
+    BackDrop,
+    ShareHome,
+    SharePeople,
+    ShareSettings
 }

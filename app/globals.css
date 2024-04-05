@@ -90,7 +90,7 @@ body {
 /* .ql-container.ql-snow{ border: none !important;} */
 
 @page {
-  margin: 1in;
+  margin: 0 !important;
 }
 
 @media print {

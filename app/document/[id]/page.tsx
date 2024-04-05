@@ -1,5 +1,5 @@
 "use client"
-import { Editor } from '@/components';
+import { BackDrop, Editor, ShareBox } from '@/components';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
@@ -74,7 +74,9 @@ const page = () => {
   }, [])
 
   return (
-    <div className='bg-slate-900'>
+    <div className='bg-slate-800'>
+      <BackDrop/>
+      <ShareBox/>
       <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black">
         <div className="flex flex-row relative items-center">
         <Image
@@ -103,7 +105,14 @@ const page = () => {
         </div>
         <div className='flex flex-row justify-center items-center'>
             <div className='flex flex-row justify-center items-center bg-[#2b88eb] h-[40px] w-[100px] rounded-r-full rounded-l-full cursor-pointer hover:bg-[#165190]'>
-                Share
+            <Image
+              src="/lock.png"
+              width={25}
+              height={25}
+              alt="lock"
+              className="mr-1"
+            />
+                <p className='mt-1'>Share</p>
             </div>
         <div className="flex flex-row justify-center items-center rounded-full h-[80%] w-[60px] bg-[#6029e1] mx-6 text-[1.5rem] font-mono">
       f
