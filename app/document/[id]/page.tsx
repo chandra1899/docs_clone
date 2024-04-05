@@ -1,13 +1,23 @@
 "use client"
 import { BackDrop, Editor, ShareBox } from '@/components';
+import { sharehomeon } from '@/store/atoms/sharehomeon';
+import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon';
+import { shareprevopen } from '@/store/atoms/shareprevopen';
+import { sharesettingson } from '@/store/atoms/sharesettingson';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { io } from "socket.io-client";
 
 const page = () => {
+  const shomeon=useRecoilValue(sharehomeon)
+  const speopleaddon=useRecoilValue(sharepeopleaddon)
+  const ssettingson=useRecoilValue(sharesettingson)
+  const setSharehomeon=useSetRecoilState(sharehomeon)
+  const setShareprevopen=useSetRecoilState(shareprevopen)
   const [arrivalContent, setArrivalContent] = useState(null);  
   const [socket, setSocket] = useState();
   const {status,data:session} =useSession()
@@ -76,7 +86,7 @@ const page = () => {
   return (
     <div className='bg-slate-800'>
       <BackDrop/>
-      <ShareBox/>
+      {(shomeon || speopleaddon || ssettingson) && <ShareBox/>}
       <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black">
         <div className="flex flex-row relative items-center">
         <Image
@@ -112,7 +122,7 @@ const page = () => {
               alt="lock"
               className="mr-1"
             />
-                <p className='mt-1'>Share</p>
+                <p className='mt-1' onClick={()=>{setSharehomeon(true);setShareprevopen("home")}} >Share</p>
             </div>
         <div className="flex flex-row justify-center items-center rounded-full h-[80%] w-[60px] bg-[#6029e1] mx-6 text-[1.5rem] font-mono">
       f

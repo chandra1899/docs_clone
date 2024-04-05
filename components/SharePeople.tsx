@@ -1,8 +1,52 @@
+import { shareemail } from '@/store/atoms/shareemail'
+import { sharehomeon } from '@/store/atoms/sharehomeon'
+import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
+import { shareprevopen } from '@/store/atoms/shareprevopen'
+import { sharesettingson } from '@/store/atoms/sharesettingson'
 import Image from 'next/image'
+import { useParams } from 'next/navigation'
 import React, { useState } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+
+const DropDown = ({expiration, setExpiration}:any)=>{
+    const [dropOn, setDropon] = useState(false)
+    const [value, setValue] = useState('Viewer')
+    return (
+        <div className='mr-4 relative'>
+            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre=>!pre))}>
+                <p >{value}</p>
+                <Image
+                    src="/dropdown.png"
+                    width={20}
+                    height={20}
+                    alt="dropdown"
+                    className="cursor-pointer mx-2"
+                />
+            </div>
+            {dropOn && <div className='z-10 absolute flex flex-col justify-center items-center p-4 bg-slate-800 ml-9 rounded-lg text-[0.8rem] w-[160px]'>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setValue('Viewer');setDropon(false)}}>Viewer</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{setValue('Editor');setDropon(false)}}>Editor</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setExpiration((pre)=>!pre);setDropon(false)}}>{expiration?`Remove Expiration`:`Add Expiration`}</p>
+            </div>}
+        </div>
+    )
+}
 
 const SharePeople = () => {
+    const setShareprevopen=useSetRecoilState(shareprevopen)
+    const setSharehomeon=useSetRecoilState(sharehomeon)
+    const setSpeopleaddon=useSetRecoilState(sharepeopleaddon)
+    const setSsettingson=useSetRecoilState(sharesettingson)
+    const semail = useRecoilValue(shareemail)
+    const {id} = useParams()
     const [notifyOn, setNotifyOn] = useState(true)
+    const [expiration, setExpiration] = useState(true)
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
+    const handleCopiedClick=()=>{
+        navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
+      }
   return (
     <div>
       <div className='flex flex-row justify-between items-center'>
@@ -13,6 +57,11 @@ const SharePeople = () => {
             height={40}
             alt="left_arrow"
             className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
+            onClick={()=>{
+                setShareprevopen("home")
+                setSpeopleaddon(false)
+                setSharehomeon(true)
+            }}
         />
         <p className='text-[1.2rem] font-medium ml-3'>Share "sfdfgdfg"</p>
         </div>
@@ -22,17 +71,21 @@ const SharePeople = () => {
             height={35}
             alt="settings"
             className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
+            onClick={()=>{setSpeopleaddon(false);setSsettingson(true)}}
         />
       </div>
-      <div className='flex flex-row justify-around items-center'>
-        <p className='text-[0.9rem] text-slate-300 font-medium rounded-lg border-2 border-blue-600 w-[60%] h-[50px] flex justify-center my-3 items-center'>chandra091827@gmail.com</p>
-        <select id="myDropdown" className='bg-black hover:bg-slate-800 rounded-lg h-[40px] w-[80px] text-[0.8rem] cursor-pointer flex justify-center items-center px-2'>
-                <option value="option1">Editor</option>
-                <option value="option2">viewer</option>
-                <option value="option3">Add expiration</option>
-                <option value="option3">remove access</option>
-            </select>
+      <div className='flex flex-row justify-between items-center ml-4'>
+        <p className='text-[0.9rem] text-slate-300 font-medium rounded-lg border-2 border-blue-600 w-[60%] h-[50px] flex justify-start pl-3 my-3 items-center'>{semail}</p>
+        <DropDown expiration = {expiration} setExpiration = {setExpiration} />
       </div>
+        {expiration && <div className='flex flex-row justify-start items-center ml-4'>
+                <p className='text-[0.8rem] font-normal mr-2'>access expires</p>
+                <input 
+                value={tomorrowISOString}
+                type="datetime-local" 
+                className='bg-[#555] border-none px-2 rounded-lg text-[0.8rem]'
+                />
+        </div>}
       <input id='notify'
        className='mx-3 my-2 h-[18px] w-[18px] cursor-pointer'
        type="checkbox"
@@ -48,6 +101,7 @@ const SharePeople = () => {
                 height={35}
                 alt="link"
                 className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
+                onClick={handleCopiedClick}
             />
             <div className='flex flex-row justify-center items-center'>
                 <p className='text-blue-600 h-[40px] w-[80px] hover:bg-slate-800 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full mx-3'>cancel</p>

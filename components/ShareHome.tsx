@@ -1,10 +1,17 @@
+import { shareemail } from '@/store/atoms/shareemail'
+import { sharehomeon } from '@/store/atoms/sharehomeon'
+import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
+import { shareprevopen } from '@/store/atoms/shareprevopen'
+import { sharesettingson } from '@/store/atoms/sharesettingson'
 import Image from 'next/image'
+import { useParams } from 'next/navigation'
 import React, { useState } from 'react'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 const AccessEmailView = ()=>{
     const [dropOn, setDropon] = useState(false)
-    const [value, setValue] = useState('')
-    const [expiration, setExpiration] = useState(false)
+    const [value, setValue] = useState('Viewer')
+    const [expiration, setExpiration] = useState(true)
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
@@ -80,9 +87,19 @@ const GeneralAccess = ({value, setValue}:any)=>{
 }
 
 const ShareHome = () => {
-    const [resValue, setResValue] = useState('')
+    const setShareprevopen=useSetRecoilState(shareprevopen)
+    const setSpeopleaddon=useSetRecoilState(sharepeopleaddon)
+    const {id} = useParams()
+    const [resValue, setResValue] = useState('Restricted')
+    const setSharesettingson=useSetRecoilState(sharesettingson)
+    const setShareemail=useSetRecoilState(shareemail)
+    const semail=useRecoilValue(shareemail)
+    const setSharehomeon=useSetRecoilState(sharehomeon)
+    const handleCopiedClick=()=>{
+        navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
+      }
   return (
-    <div>
+    <div className='pl-4'>
       <div className='h-[35px] flex justify-between items-center'>
         <p className='text-[1.7rem] font-medium'>Share "sfdfgdfg"</p>
         <Image
@@ -91,6 +108,7 @@ const ShareHome = () => {
         height={35}
         alt="settings"
         className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
+        onClick={()=>{setSharehomeon(false);setSharesettingson(true)}}
       />
       </div>
       <div className='flex items-center justify-center my-4'>
@@ -98,8 +116,14 @@ const ShareHome = () => {
         type="text" 
         placeholder='add people with email'
         className={`bg-transparent h-[40px] w-[70%] border-[#4125f1] border-[0.1rem] border-solid text-white placeholder:text-secondary placeholder:opacity-60 py-2 px-3  rounded-lg outline-none focus:border-2 focus:border-solid font-medium my-2`}
+        value={semail}
+        onChange={(e:any)=>{setShareemail(e.target.value)}}
         />
-        <button className='h-[40px] w-[50px] flex justify-center items-center bg-green-600 hover:bg-green-700 rounded-lg mx-4'>
+        <button className='h-[40px] w-[50px] flex justify-center items-center bg-green-600 hover:bg-green-700 rounded-lg mx-4' onClick={()=>{
+            setShareprevopen("people")
+            setSharehomeon(false)
+            setSpeopleaddon(true)
+        }}>
             <Image
                 src="/arrow_right.png"
                 width={35}
@@ -148,7 +172,7 @@ const ShareHome = () => {
       </div>
       </div>
       <div className='flex flex-row justify-between items-center mx-2'>
-        <div className='flex flex-row justify-center items-center border-2 border-blue-600 rounded-l-full rounded-r-full p-1 px-3 h-[40px] hover:bg-slate-800 cursor-pointer my-4'>
+        <div className='flex flex-row justify-center items-center border-2 border-blue-600 rounded-l-full rounded-r-full p-1 px-3 h-[40px] hover:bg-slate-800 cursor-pointer my-4' onClick={handleCopiedClick} >
             <Image
                     src="/link.png"
                     width={28}
