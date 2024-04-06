@@ -16,7 +16,7 @@ export async function POST(req:Request){
                 select : '-password'
             }
         })
-        // console.log(document);
+        console.log(document);
         
         return NextResponse.json({document},{status:200})
     } catch (error) {

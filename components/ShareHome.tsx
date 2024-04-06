@@ -1,3 +1,4 @@
+"use client"
 import { currentdocument } from '@/store/atoms/currentdocument'
 import { shareemail } from '@/store/atoms/shareemail'
 import { sharehomeon } from '@/store/atoms/sharehomeon'
@@ -13,17 +14,24 @@ const AccessEmailView = ({peopleob}:any)=>{
     const [dropOn, setDropon] = useState(false)
     const [value, setValue] = useState(peopleob.role)
     const [expiration, setExpiration] = useState(peopleob.expirationOn)
+    const [expirationDate, setExpirationDate] = useState(peopleob.expirationDate)
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
+    const handleChangeDate = (e:any)=>{
+        const currentDate = new Date().toISOString().slice(0, 16);
+        
+        if(e.target.value <= currentDate) return 
+        setExpirationDate(e.target.value)
+    }
     return (
         <div className='flex flex-col '>
             <div className='flex flex-row justify-between items-center'>
             <div className='flex flex-row justify-start items-center my-2'>
-            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{peopleob.user.name[0]}</div>
+            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{peopleob?.user?.name[0]}</div>
             <div >
-                <p className='text-[0.95rem]'>{peopleob.user.name}</p>
-                <p className='text-[0.8rem] font-normal text-blue-800'>{peopleob.user.email}</p>
+                <p className='text-[0.95rem]'>{peopleob?.user?.name}</p>
+                <p className='text-[0.8rem] font-normal text-blue-800'>{peopleob?.user?.email}</p>
             </div>
         </div>
         <div className='mr-4 relative'>
@@ -55,7 +63,7 @@ const AccessEmailView = ({peopleob}:any)=>{
            {expiration && <div className='flex flex-row justify-center items-center'>
                 <p className='text-[0.8rem] font-normal mr-2'>access expires</p>
                 <input 
-                value={tomorrowISOString}
+                value={expirationDate}
                 type="datetime-local" 
                 className='bg-[#555] border-none px-2 rounded-lg text-[0.8rem]'
                 />
@@ -144,11 +152,11 @@ const ShareHome = () => {
         <div className='flex flex-col '>
             <div className='flex flex-row justify-between items-center'>
             <div className='flex flex-row justify-start items-center my-2'>
-            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{currentdocumentob?.ownedBy.name
+            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{currentdocumentob?.ownedBy?.name
 [0]}</div>
             <div >
-                <p className='text-[0.95rem] text-violet-600'>{currentdocumentob?.ownedBy.name}</p>
-                <p className='text-[0.8rem] font-normal text-blue-800'>{currentdocumentob?.ownedBy.email}</p>
+                <p className='text-[0.95rem] text-violet-600'>{currentdocumentob?.ownedBy?.name}</p>
+                <p className='text-[0.8rem] font-normal text-blue-800'>{currentdocumentob?.ownedBy?.email}</p>
             </div>
         </div>
         <div className='mr-4 relative'>
@@ -159,7 +167,7 @@ const ShareHome = () => {
         </div>
            
         </div>
-        {currentdocumentob?.share.peoplewithaccess.map((peopleob:any)=>(
+        {currentdocumentob?.share?.peoplewithaccess?.map((peopleob:any)=>(
             <AccessEmailView peopleob = {peopleob} />
         ))}
       </div>

@@ -1,3 +1,4 @@
+"use client"
 import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
 import { shareprevopen } from '@/store/atoms/shareprevopen'

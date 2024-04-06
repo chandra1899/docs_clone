@@ -1,3 +1,4 @@
+"use client"
 import { currentdocument } from '@/store/atoms/currentdocument'
 import { shareemail } from '@/store/atoms/shareemail'
 import { sharehomeon } from '@/store/atoms/sharehomeon'

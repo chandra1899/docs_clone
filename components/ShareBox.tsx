@@ -1,3 +1,4 @@
+"use client"
 import React from 'react'
 import ShareHome from './ShareHome'
 import SharePeople from './SharePeople'
