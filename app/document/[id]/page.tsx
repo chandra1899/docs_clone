@@ -7,7 +7,7 @@ import { sharesettingson } from '@/store/atoms/sharesettingson';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { io } from "socket.io-client";
@@ -21,6 +21,7 @@ const page = () => {
   const [arrivalContent, setArrivalContent] = useState(null);  
   const [socket, setSocket] = useState();
   const {status,data:session} =useSession()
+  const router = useRouter();
   const {id} = useParams()
   const [value, setValue] = useState('');
   const [documentName, setDocumentName] = useState('');
@@ -87,14 +88,15 @@ const page = () => {
     <div className='bg-slate-800'>
       <BackDrop/>
       {(shomeon || speopleaddon || ssettingson) && <ShareBox/>}
-      <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black">
+      <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black sticky top-0 z-[1]">
         <div className="flex flex-row relative items-center">
         <Image
         src="/docs_img.png"
         width={48}
         height={48}
         alt="docs_img"
-        className="ml-3"
+        className="ml-3 cursor-pointer"
+        onClick={()=>{router.push(`/`);}}
       />
       <div className='flex flex-col justify-center ml-3 font-normal'>
         <input 
@@ -114,7 +116,7 @@ const page = () => {
       </div>
         </div>
         <div className='flex flex-row justify-center items-center'>
-            <div className='flex flex-row justify-center items-center bg-[#2b88eb] h-[40px] w-[100px] rounded-r-full rounded-l-full cursor-pointer hover:bg-[#165190]'>
+            <div className='flex flex-row justify-center items-center bg-[#2b88eb] h-[40px] w-[100px] rounded-r-full rounded-l-full cursor-pointer hover:bg-[#165190]' onClick={()=>{setSharehomeon(true);setShareprevopen("home")}}>
             <Image
               src="/lock.png"
               width={25}
@@ -122,7 +124,7 @@ const page = () => {
               alt="lock"
               className="mr-1"
             />
-                <p className='mt-1' onClick={()=>{setSharehomeon(true);setShareprevopen("home")}} >Share</p>
+                <p className='mt-1'>Share</p>
             </div>
         <div className="flex flex-row justify-center items-center rounded-full h-[80%] w-[60px] bg-[#6029e1] mx-6 text-[1.5rem] font-mono">
       f

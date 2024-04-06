@@ -1,16 +1,17 @@
+import { currentdocument } from '@/store/atoms/currentdocument'
 import { shareemail } from '@/store/atoms/shareemail'
 import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
 import { shareprevopen } from '@/store/atoms/shareprevopen'
 import { sharesettingson } from '@/store/atoms/sharesettingson'
+import axios from 'axios'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-const DropDown = ({expiration, setExpiration}:any)=>{
+const DropDown = ({expiration, setExpiration, value, setValue}:any)=>{
     const [dropOn, setDropon] = useState(false)
-    const [value, setValue] = useState('Viewer')
     return (
         <div className='mr-4 relative'>
             <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre=>!pre))}>
@@ -37,16 +38,56 @@ const SharePeople = () => {
     const setSharehomeon=useSetRecoilState(sharehomeon)
     const setSpeopleaddon=useSetRecoilState(sharepeopleaddon)
     const setSsettingson=useSetRecoilState(sharesettingson)
+    const setShareemail=useSetRecoilState(shareemail)
+    const setCurrentdocument=useSetRecoilState(currentdocument)
     const semail = useRecoilValue(shareemail)
     const {id} = useParams()
     const [notifyOn, setNotifyOn] = useState(true)
+    const [role, setRole] = useState("Viewer")
     const [expiration, setExpiration] = useState(true)
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
+    const [expirationDate, setExpirationDate] = useState(tomorrowISOString)
     const handleCopiedClick=()=>{
         navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
       }
+      const handleDateChange = (e:any)=>{
+        const currentDate = new Date().toISOString().slice(0, 16);
+        
+        if(e.target.value <= currentDate) return 
+        setExpirationDate(e.target.value)
+        
+      }
+    const handleShare =async ()=>{
+      if(semail == "") return 
+      let res=await axios.post(`/api/createshare`,{
+        email : semail,
+        role,
+        expirationOn : expiration,
+        expirationDate ,
+        roomName : id     
+      })
+      if(res.status === 200 && res?.data?.people != undefined){
+        let insert = res?.data?.people
+        setCurrentdocument((prev)=>{
+          console.log("prev", prev);
+          const updatedPrev = {
+            ...prev,
+            share: {
+                ...prev.share,
+                peoplewithaccess: [...prev.share.peoplewithaccess, insert]
+            }
+        }; 
+        console.log("updatedPrev", updatedPrev);
+        
+          return updatedPrev
+        })
+        setSpeopleaddon(false)
+        setSharehomeon(true)
+      }
+    }
+
   return (
     <div>
       <div className='flex flex-row justify-between items-center'>
@@ -61,6 +102,7 @@ const SharePeople = () => {
                 setShareprevopen("home")
                 setSpeopleaddon(false)
                 setSharehomeon(true)
+                setShareemail("")
             }}
         />
         <p className='text-[1.2rem] font-medium ml-3'>Share "sfdfgdfg"</p>
@@ -76,14 +118,15 @@ const SharePeople = () => {
       </div>
       <div className='flex flex-row justify-between items-center ml-4'>
         <p className='text-[0.9rem] text-slate-300 font-medium rounded-lg border-2 border-blue-600 w-[60%] h-[50px] flex justify-start pl-3 my-3 items-center'>{semail}</p>
-        <DropDown expiration = {expiration} setExpiration = {setExpiration} />
+        <DropDown expiration = {expiration} setExpiration = {setExpiration} value = {role} setValue = {setRole} />
       </div>
         {expiration && <div className='flex flex-row justify-start items-center ml-4'>
                 <p className='text-[0.8rem] font-normal mr-2'>access expires</p>
                 <input 
-                value={tomorrowISOString}
+                value={expirationDate}
                 type="datetime-local" 
                 className='bg-[#555] border-none px-2 rounded-lg text-[0.8rem]'
+                onChange={handleDateChange}
                 />
         </div>}
       <input id='notify'
@@ -104,9 +147,16 @@ const SharePeople = () => {
                 onClick={handleCopiedClick}
             />
             <div className='flex flex-row justify-center items-center'>
-                <p className='text-blue-600 h-[40px] w-[80px] hover:bg-slate-800 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full mx-3'>cancel</p>
+                <p className='text-blue-600 h-[40px] w-[80px] hover:bg-slate-800 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full mx-3'
+                onClick={()=>{
+                    setShareprevopen("home")
+                    setSpeopleaddon(false)
+                    setSharehomeon(true)
+                    setShareemail("")
+                }}
+                >cancel</p>
                 {notifyOn?<p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full'>Send</p>
-                :<p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full'>Share</p>}
+                :<p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full' onClick={handleShare} >Share</p>}
             </div>
       </div>
     </div>

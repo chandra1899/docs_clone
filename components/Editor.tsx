@@ -6,11 +6,14 @@ import 'quill/dist/quill.snow.css';
 import Quill from 'quill'
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
+import { useSetRecoilState } from 'recoil';
+import { currentdocument } from '@/store/atoms/currentdocument';
 
 // const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 
 const Editor = ({value, setValue, socket}:any) => {
     // const {status,data:session} =useSession()
+    const setCurrentDocument = useSetRecoilState(currentdocument)
     const {id} = useParams()
     const [quill, setQuill] = useState()
     // const handleOnChange = async (e:any)=>{
@@ -49,10 +52,12 @@ const Editor = ({value, setValue, socket}:any) => {
       useEffect(()=>{
         if(socket == null || quill == null) return 
 
-        socket.on('load_document', (data:any)=>{
-          console.log('load document data', data);
+        socket.on('load_document', (document:any)=>{
+          console.log('load document data', document);
+          setCurrentDocument(document)
+          console.log(document);
           
-          quill.setContents(data)
+          quill.setContents(document.contents)
           quill.enable()
         })
         socket.emit("get_document", id)
@@ -62,7 +67,7 @@ const Editor = ({value, setValue, socket}:any) => {
         if(socket == null || quill == null) return 
 
         const interval = setInterval(()=>{
-          console.log('dfdf',quill.getContents());
+          // console.log('dfdf',quill.getContents());
           
           socket.emit('save_document', quill.getContents())
         },2000)

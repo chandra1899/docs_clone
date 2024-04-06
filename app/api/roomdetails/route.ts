@@ -7,9 +7,17 @@ export async function POST(req:Request){
         const { roomName } = await req.json();
         console.log("roomame", roomName);
         await connectMongoDB()
-        const document = await Document.findOne({
-            roomName
-        }) 
+        const document = await Document.findOne({ roomName })
+        .populate('ownedBy', '-password')
+        .populate({
+            path : 'share.peoplewithaccess',
+            populate : {
+                path : 'user',
+                select : '-password'
+            }
+        })
+        // console.log(document);
+        
         return NextResponse.json({document},{status:200})
     } catch (error) {
         console.log(error);

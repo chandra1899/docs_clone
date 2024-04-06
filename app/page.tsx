@@ -1,5 +1,6 @@
 "use client"
 import { YourDocs } from "@/components";
+import { currentdocument } from "@/store/atoms/currentdocument";
 import { yourDocuments } from "@/store/atoms/yourDocuments";
 import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
@@ -11,6 +12,7 @@ import { useSetRecoilState } from "recoil";
 export default function Home() {
   const {status,data:session} =useSession()
   const setYourDocuments=useSetRecoilState(yourDocuments)
+  const setCurrentDocument = useSetRecoilState(currentdocument)
   const router = useRouter();
     const generateRandomCharactors = ()=>{
       let allChar="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
@@ -47,6 +49,7 @@ export default function Home() {
 
     useEffect(()=>{
       fetchDocuments();
+      setCurrentDocument(undefined)
     },[session])
   
   return (
@@ -58,7 +61,8 @@ export default function Home() {
         width={35}
         height={35}
         alt="docs_img"
-        className="ml-3"
+        className="ml-3 cursor-pointer"
+        onClick={()=>{router.push(`/`);}}
       />
       <p className="ml-4 font-semibold mt-1">DOCS</p>
         </div>

@@ -1,3 +1,4 @@
+import { currentdocument } from '@/store/atoms/currentdocument'
 import { shareemail } from '@/store/atoms/shareemail'
 import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
@@ -5,13 +6,13 @@ import { shareprevopen } from '@/store/atoms/shareprevopen'
 import { sharesettingson } from '@/store/atoms/sharesettingson'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-const AccessEmailView = ()=>{
+const AccessEmailView = ({peopleob}:any)=>{
     const [dropOn, setDropon] = useState(false)
-    const [value, setValue] = useState('Viewer')
-    const [expiration, setExpiration] = useState(true)
+    const [value, setValue] = useState(peopleob.role)
+    const [expiration, setExpiration] = useState(peopleob.expirationOn)
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
@@ -19,10 +20,10 @@ const AccessEmailView = ()=>{
         <div className='flex flex-col '>
             <div className='flex flex-row justify-between items-center'>
             <div className='flex flex-row justify-start items-center my-2'>
-            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full'>f</div>
+            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{peopleob.user.name[0]}</div>
             <div >
-                <p className='text-[0.95rem]'>chandra</p>
-                <p className='text-[0.8rem] font-normal text-slate-300'>chandra@gmail.com</p>
+                <p className='text-[0.95rem]'>{peopleob.user.name}</p>
+                <p className='text-[0.8rem] font-normal text-blue-800'>{peopleob.user.email}</p>
             </div>
         </div>
         <div className='mr-4 relative'>
@@ -89,15 +90,19 @@ const GeneralAccess = ({value, setValue}:any)=>{
 const ShareHome = () => {
     const setShareprevopen=useSetRecoilState(shareprevopen)
     const setSpeopleaddon=useSetRecoilState(sharepeopleaddon)
+    const semail=useRecoilValue(shareemail)
+    const currentdocumentob=useRecoilValue(currentdocument)
     const {id} = useParams()
-    const [resValue, setResValue] = useState('Restricted')
+    const [resValue, setResValue] = useState('')
     const setSharesettingson=useSetRecoilState(sharesettingson)
     const setShareemail=useSetRecoilState(shareemail)
-    const semail=useRecoilValue(shareemail)
     const setSharehomeon=useSetRecoilState(sharehomeon)
     const handleCopiedClick=()=>{
         navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
       }
+    useEffect(()=>{
+        setResValue(currentdocumentob?.share?.generalaccess)
+    },[currentdocumentob])
   return (
     <div className='pl-4'>
       <div className='h-[35px] flex justify-between items-center'>
@@ -135,9 +140,28 @@ const ShareHome = () => {
       </div>
       <div>
         <p className='font-medium'>People with access</p>
-        <AccessEmailView/>
-        {/* <AccessEmailView/>
-        <AccessEmailView/> */}
+        {/* display owner */}
+        <div className='flex flex-col '>
+            <div className='flex flex-row justify-between items-center'>
+            <div className='flex flex-row justify-start items-center my-2'>
+            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{currentdocumentob?.ownedBy.name
+[0]}</div>
+            <div >
+                <p className='text-[0.95rem] text-violet-600'>{currentdocumentob?.ownedBy.name}</p>
+                <p className='text-[0.8rem] font-normal text-blue-800'>{currentdocumentob?.ownedBy.email}</p>
+            </div>
+        </div>
+        <div className='mr-4 relative'>
+            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' >
+                <p className='text-slate-400'>Owner</p>
+            </div>
+        </div>
+        </div>
+           
+        </div>
+        {currentdocumentob?.share.peoplewithaccess.map((peopleob:any)=>(
+            <AccessEmailView peopleob = {peopleob} />
+        ))}
       </div>
       <div>
       <p className='font-medium mt-2'>General access</p>
@@ -182,7 +206,7 @@ const ShareHome = () => {
                 />
             <p className='font-medium ml-2 text-[0.9rem]'>Copy link</p>
         </div>
-        <p className='bg-blue-600 hover:bg-blue-700 cursor-pointer h-[40px] w-[80px] rounded-l-full rounded-r-full flex justify-center items-center font-medium'>Done</p>
+        <p className='bg-blue-600 hover:bg-blue-700 cursor-pointer h-[40px] w-[80px] rounded-l-full rounded-r-full flex justify-center items-center font-medium' onClick={()=>{setSharehomeon(false)}}>Done</p>
       </div>
     </div>
   )
