@@ -1,6 +1,7 @@
 import {NextResponse } from 'next/server'
 import { connectMongoDB } from '@/config/mongoose'
 import Document from '@/models/document'
+// import PeopleWithAccess from '@/models/peoplewithaccess'
 
 export async function POST(req:Request){
     try {
@@ -16,6 +17,8 @@ export async function POST(req:Request){
                 select : '-password'
             }
         })
+        // console.log(await PeopleWithAccess.find());
+        
         console.log(document);
         
         return NextResponse.json({document},{status:200})

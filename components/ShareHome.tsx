@@ -5,6 +5,7 @@ import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
 import { shareprevopen } from '@/store/atoms/shareprevopen'
 import { sharesettingson } from '@/store/atoms/sharesettingson'
+import axios from 'axios'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
@@ -15,14 +16,49 @@ const AccessEmailView = ({peopleob}:any)=>{
     const [value, setValue] = useState(peopleob.role)
     const [expiration, setExpiration] = useState(peopleob.expirationOn)
     const [expirationDate, setExpirationDate] = useState(peopleob.expirationDate)
+    const {id : roomName} = useParams()
+    
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
-    const handleChangeDate = (e:any)=>{
+    const handleChangeDate =async (e:any)=>{
         const currentDate = new Date().toISOString().slice(0, 16);
-        
         if(e.target.value <= currentDate) return 
-        setExpirationDate(e.target.value)
+        let res = await axios.post('/api/sharepeoplechange',{
+            role : value, _id : peopleob._id, expirationOn : expiration, expirationDate : e.target.value
+        })
+        if(res.status === 200){
+            setExpirationDate(e.target.value)
+        }
+    }
+    const handlechange =async  (role : String)=>{
+        // const {role, expirationOn, expirationDate, _id}=await req.json()
+        let res = await axios.post('/api/sharepeoplechange',{
+            role, _id : peopleob._id, expirationOn : expiration, expirationDate
+        })
+        if(res.status === 200){
+            setValue(role)
+            setDropon(false)
+        }
+    }
+    const handleexpirationOn =async ()=>{
+        let res = await axios.post('/api/sharepeoplechange',{
+            role : value, _id : peopleob._id, expirationOn : !expiration, expirationDate
+        })
+        if(res.status === 200){
+            setExpiration((pre:any)=>!pre)
+            setDropon(false)
+        }
+    }
+    const handleremoveaccess =async (e)=>{
+        // console.log(e.target.parentNode.parentNode.parentNode.parentNode);
+        
+        let res = await axios.post('/api/removeaccess',{
+            _id : peopleob._id, roomName
+        })
+        if(res.status === 200){
+            e.target.parentNode.parentNode.parentNode.parentNode.classList.add('hidden')
+        }
     }
     return (
         <div className='flex flex-col '>
@@ -46,10 +82,10 @@ const AccessEmailView = ({peopleob}:any)=>{
                 />
             </div>
             {dropOn && <div className='z-10 absolute flex flex-col justify-center items-center p-4 bg-slate-800 ml-9 rounded-lg text-[0.8rem] w-[160px]'>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setValue('Viewer');setDropon(false)}}>Viewer</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{setValue('Editor');setDropon(false)}}>Editor</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setExpiration((pre)=>!pre);setDropon(false)}}>{expiration?`Remove Expiration`:`Add Expiration`}</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center'>Remove access</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{handlechange('Viewer')}}>Viewer</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{handlechange('Editor')}}>Editor</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{handleexpirationOn()}}>{expiration?`Remove Expiration`:`Add Expiration`}</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={handleremoveaccess} >Remove access</p>
             </div>}
             {/* <select id="myDropdown" className='bg-black hover:bg-slate-800 rounded-lg h-[40px] w-[80px] text-[0.8rem] cursor-pointer flex justify-center items-center px-2'>
                 <option value="option1">Editor</option>
@@ -64,6 +100,7 @@ const AccessEmailView = ({peopleob}:any)=>{
                 <p className='text-[0.8rem] font-normal mr-2'>access expires</p>
                 <input 
                 value={expirationDate}
+                onChange={handleChangeDate}
                 type="datetime-local" 
                 className='bg-[#555] border-none px-2 rounded-lg text-[0.8rem]'
                 />
@@ -73,7 +110,19 @@ const AccessEmailView = ({peopleob}:any)=>{
 }
 
 const GeneralAccess = ({value, setValue}:any)=>{
+    const {id : roomName} = useParams()
     const [dropOn, setDropon] = useState(false)
+    const handlechange =async (generalaccess:String)=>{
+        console.log(generalaccess);
+        
+        let res = await axios.post('/api/homechange',{
+            generalaccess, roomName
+        })
+        if(res.status === 200){
+            setValue(generalaccess)
+            setDropon(false)
+        }
+    }
     return (
         <div className='mr-4 relative'>
             <div className='flex flex-row justify-start items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre=>!pre))}>
@@ -87,9 +136,9 @@ const GeneralAccess = ({value, setValue}:any)=>{
                 />
             </div>
             {dropOn && <div className='z-10 absolute flex flex-col justify-center items-center p-2 bg-slate-800 ml-9 rounded-lg text-[0.9rem] w-[160px]'>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{setValue('Restricted');setDropon(false)}}>Restricted</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{setValue('In this Organisation');setDropon(false)}}>In this Organisation</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setValue('Any one with link');setDropon(false)}}>Any one with link</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{handlechange('Restricted')}}>Restricted</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{handlechange('In this Organisation')}}>In this Organisation</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{handlechange('Any one with link')}}>Any one with link</p>
             </div>}
         </div>
     )

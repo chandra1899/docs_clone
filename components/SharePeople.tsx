@@ -72,7 +72,7 @@ const SharePeople = () => {
       if(res.status === 200 && res?.data?.people != undefined){
         let insert = res?.data?.people
         setCurrentdocument((prev)=>{
-          console.log("prev", prev);
+          // console.log("prev", prev);
           const updatedPrev = {
             ...prev,
             share: {
@@ -80,10 +80,11 @@ const SharePeople = () => {
                 peoplewithaccess: [...prev.share.peoplewithaccess, insert]
             }
         }; 
-        console.log("updatedPrev", updatedPrev);
+        // console.log("updatedPrev", updatedPrev);
         
           return updatedPrev
         })
+        setShareemail("")
         setSpeopleaddon(false)
         setSharehomeon(true)
       }

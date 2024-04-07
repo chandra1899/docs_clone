@@ -24,6 +24,6 @@ const peopleWithAccessSchema = new Schema({
     }
 }, { timestamps: true });
 
-const PeopleWithAccess = models?.PeopleWithAccess || mongoose.model('PeopleWithAccess', peopleWithAccessSchema);
+const Peoplewithaccess = models?.Peoplewithaccess || mongoose.model('Peoplewithaccess', peopleWithAccessSchema);
 
-export default PeopleWithAccess;
+export default Peoplewithaccess;
