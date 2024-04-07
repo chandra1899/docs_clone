@@ -1,5 +1,8 @@
 "use client"
 import { BackDrop, Editor, ShareBox } from '@/components';
+import { currentdocument } from '@/store/atoms/currentdocument';
+import { resValue1 } from '@/store/atoms/resValue1';
+import { resValue2 } from '@/store/atoms/resValue2';
 import { sharehomeon } from '@/store/atoms/sharehomeon';
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon';
 import { shareprevopen } from '@/store/atoms/shareprevopen';
@@ -13,11 +16,14 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { io } from "socket.io-client";
 
 const page = () => {
+  const setValue1 = useSetRecoilState(resValue1)
+  const setValue2 = useSetRecoilState(resValue2)
   const shomeon=useRecoilValue(sharehomeon)
   const speopleaddon=useRecoilValue(sharepeopleaddon)
   const ssettingson=useRecoilValue(sharesettingson)
   const setSharehomeon=useSetRecoilState(sharehomeon)
   const setShareprevopen=useSetRecoilState(shareprevopen)
+  const currentdocumentob=useRecoilValue(currentdocument)
   const [arrivalContent, setArrivalContent] = useState(null);  
   const [socket, setSocket] = useState();
   const {status,data:session} =useSession()
@@ -83,6 +89,10 @@ const page = () => {
       s.disconnect()
     }
   }, [])
+  useEffect(()=>{
+    setValue1(currentdocumentob?.share?.generalaccess?.value)
+    setValue2(currentdocumentob?.share?.generalaccess?.role)
+},[currentdocumentob])
 
   return (
     <div className='bg-slate-800'>

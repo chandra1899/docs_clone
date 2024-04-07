@@ -1,60 +1,47 @@
-"use client"
 import Image from 'next/image'
 import React from 'react'
+import { useRecoilValue } from 'recoil'
+import { resValue1 } from '@/store/atoms/resValue1'
+import { resValue2 } from '@/store/atoms/resValue2'
 
-const GeneralAccess = ({value, handlechange, dropOn, setDropon}:any)=>{
-    return (
-        <div className='mr-4 relative'>
-            <div className='flex flex-row justify-start items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre:any)=>!pre)}>
-                <p className='ml-2' >{value}</p>
-                <Image
-                    src="/dropdown.png"
-                    width={20}
-                    height={20}
-                    alt="dropdown"
-                    className="cursor-pointer mx-2"
-                />
-            </div>
-            {dropOn && <div className='z-10 absolute flex flex-col justify-start items-center py-2 pl-3 bg-slate-800  rounded-lg text-[0.9rem] w-[190px]'>
-                <div className='flex flex-row justify-start items-center w-[100%] '>
-                    <div className='flex justify-start items-center h-[30px] w-[30px]'>
-                        {value === "Restricted" && <Image
-                        src="/tick.png"
-                        width={30}
-                        height={30}
-                        alt="tick"
-                        className="cursor-pointer"
-                        />}
-                    </div>
-                    <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-start items-center border-b-2 border-blue-800 pb-2' onClick={()=>{handlechange('Restricted', 'Viewer')}}>Restricted</p>
+const GeneralAccess = () => {
+    const Value1 = useRecoilValue(resValue1)
+    const Value2 = useRecoilValue(resValue2)
+  return (
+    <div>
+      <p className='font-medium mt-2'>General access</p>
+      <div className='flex flex-row justify-start items-center ml-2 my-2 '>
+                    {Value1 ==='Restricted' && <Image
+                    src="/lock.png"
+                    width={28}
+                    height={28}
+                    alt="lock"
+                    className="bg-[#555] rounded-full p-1"
+                />}
+                    {Value1 === 'In this Organisation' && <Image
+                    src="/organisation.png"
+                    width={28}
+                    height={28}
+                    alt="lock"
+                    className="bg-blue-700 rounded-full p-1"
+                />}
+                    {Value1 ==='AnyOne with link' && <Image
+                    src="/globe.png"
+                    width={28}
+                    height={28}
+                    alt="lock"
+                    className="bg-green-600 rounded-full p-1"
+                />}
+                <div className='ml-1'>
+                    <p className='text-slate-300 text-[0.9rem] ml-3'>{Value1}</p>
+                    {Value1 ==='Restricted' && <p className='text-[0.8rem] font-normal ml-3'>Only people with access can open with the link</p>}
+                    {Value1 === 'In this Organisation' && <p className='text-[0.8rem] font-normal ml-3'>Anyone in this group with the link can view</p>}
+                    {Value1 ==='AnyOne with link' && <p className='text-[0.8rem] font-normal ml-3'>Anyone on the internet with the link can view</p>}
                 </div>
-                <div className='flex flex-row justify-start items-center w-[100%]'>
-                    <div className='flex justify-start items-center h-[30px] w-[30px]'>
-                    {value === "In this Organisation" && <Image
-                        src="/tick.png"
-                        width={30}
-                        height={30}
-                        alt="tick"
-                        className="cursor-pointer"
-                        />}
-                    </div>
-                    <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-start items-center border-b-2 border-blue-800 pb-2' onClick={()=>{handlechange('In this Organisation', 'Viewer')}}>In this Organisation</p>
-                </div>
-                <div className='flex flex-row justify-start items-center w-[100%]'>
-                    <div className='flex justify-start items-center h-[30px] w-[30px]'>
-                    {value === "AnyOne with link" && <Image
-                        src="/tick.png"
-                        width={30}
-                        height={30}
-                        alt="tick"
-                        className="cursor-pointer"
-                        />}
-                    </div>
-                    <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-start items-center' onClick={()=>{handlechange('AnyOne with link', 'Viewer')}}>AnyOne with link</p>
-                </div>                
-            </div>}
-        </div>
-    )
+                {Value1 !=='Restricted' && <p className='text-slate-300 text-[0.9rem] ml-3'>{Value2}</p>}
+      </div>
+      </div>
+  )
 }
 
 export default GeneralAccess

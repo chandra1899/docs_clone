@@ -9,6 +9,10 @@ import BackDrop from './BackDrop'
 import ShareHome from './ShareHome'
 import SharePeople from './SharePeople'
 import ShareSettings from './ShareSettings'
+import GeneralAccessDropDown from './GeneralAccessDropDown'
+import ViewerHome from './ViewerHome'
+import DropDown from './DropDown'
+import AccessEmailView from './AccessEmailView'
 import GeneralAccess from './GeneralAccess'
 
 export {
@@ -23,5 +27,9 @@ export {
     ShareHome,
     SharePeople,
     ShareSettings,
+    GeneralAccessDropDown,
+    ViewerHome,
+    DropDown,
+    AccessEmailView,
     GeneralAccess
 }

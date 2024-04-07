@@ -10,13 +10,13 @@ export async function POST(req:Request){
         await connectMongoDB()
         const document = await Document.findOne({ roomName })
         .populate('ownedBy', '-password')
-        .populate({
-            path : 'share.peoplewithaccess',
-            populate : {
-                path : 'user',
-                select : '-password'
-            }
-        })
+        // .populate({
+        //     path : 'share.peoplewithaccess',
+        //     populate : {
+        //         path : 'user',
+        //         select : '-password'
+        //     }
+        // })
         // console.log(await PeopleWithAccess.find());
         
         console.log(document);
