@@ -5,6 +5,7 @@ import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
 import { shareprevopen } from '@/store/atoms/shareprevopen'
 import { sharesettingson } from '@/store/atoms/sharesettingson'
+import { yourrole } from '@/store/atoms/yourrole'
 import axios from 'axios'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
@@ -42,6 +43,7 @@ const SharePeople = () => {
     const setShareemail=useSetRecoilState(shareemail)
     const setCurrentdocument=useSetRecoilState(currentdocument)
     const semail = useRecoilValue(shareemail)
+    const myrole = useRecoilValue(yourrole)
     const {id} = useParams()
     const [notifyOn, setNotifyOn] = useState(true)
     const [role, setRole] = useState("Viewer")
@@ -109,14 +111,14 @@ const SharePeople = () => {
         />
         <p className='text-[1.2rem] font-medium ml-3'>Share "sfdfgdfg"</p>
         </div>
-        <Image
+        {myrole === 'owner' && <Image
             src="/settings.png"
             width={35}
             height={35}
             alt="settings"
             className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
             onClick={()=>{setSpeopleaddon(false);setSsettingson(true)}}
-        />
+        />}
       </div>
       <div className='flex flex-row justify-between items-center ml-4'>
         <p className='text-[0.9rem] text-slate-300 font-medium rounded-lg border-2 border-blue-600 w-[60%] h-[50px] flex justify-start pl-3 my-3 items-center'>{semail}</p>

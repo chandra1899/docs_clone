@@ -15,6 +15,7 @@ import { resValue2 } from '@/store/atoms/resValue2'
 import { resValue1 } from '@/store/atoms/resValue1'
 import { dropOn1 } from '@/store/atoms/dropOn1'
 import { dropOn2 } from '@/store/atoms/dropOn2'
+import { yourrole } from '@/store/atoms/yourrole'
 
 
 
@@ -27,6 +28,7 @@ const ShareHome = () => {
     const setSharesettingson=useSetRecoilState(sharesettingson)
     const setShareemail=useSetRecoilState(shareemail)
     const setSharehomeon=useSetRecoilState(sharehomeon)
+    const myrole = useRecoilValue(yourrole)
     const handleCopiedClick=()=>{
         navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
       }
@@ -36,14 +38,14 @@ const ShareHome = () => {
     <div className='pl-4'>
       <div className='h-[35px] flex justify-between items-center'>
         <p className='text-[1.7rem] font-medium'>Share "sfdfgdfg"</p>
-        <Image
+        {myrole === 'owner' && <Image
         src="/settings.png"
         width={35}
         height={35}
         alt="settings"
         className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
         onClick={()=>{setSharehomeon(false);setSharesettingson(true)}}
-      />
+      />}
       </div>
       <div className='flex items-center justify-center my-4'>
         <input 

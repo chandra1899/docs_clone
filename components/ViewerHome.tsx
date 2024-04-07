@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react'
 import GeneralAccess from './GeneralAccess'
 import Image from 'next/image'

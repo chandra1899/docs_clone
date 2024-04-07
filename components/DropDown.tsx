@@ -1,3 +1,4 @@
+"use client"
 import { dropOn1 } from '@/store/atoms/dropOn1'
 import { dropOn2 } from '@/store/atoms/dropOn2'
 import { resValue1 } from '@/store/atoms/resValue1'

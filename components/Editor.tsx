@@ -6,27 +6,18 @@ import 'quill/dist/quill.snow.css';
 import Quill from 'quill'
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { currentdocument } from '@/store/atoms/currentdocument';
+import { yourrole } from '@/store/atoms/yourrole';
 
 // const QuillEditor = dynamic(() => import('react-quill'), { ssr: false });
 
-const Editor = ({value, setValue, socket}:any) => {
+const Editor = ({socket}:any) => {
     // const {status,data:session} =useSession()
     const setCurrentDocument = useSetRecoilState(currentdocument)
+    const myrole = useRecoilValue(yourrole)
     const {id} = useParams()
     const [quill, setQuill] = useState()
-    // const handleOnChange = async (e:any)=>{
-    //   // let email=session?.user?.email
-    //   // if(!email) return ;
-    //   let res=await axios.post('/api/savedocument',{
-    //     roomName : id,
-    //     content : e
-    //   })
-    //   if(res.status === 200){
-    //     await socket.emit('change', id, e)
-    //   }
-    // }
 
     const Toolbar_Options =  [
         ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
@@ -115,6 +106,15 @@ const Editor = ({value, setValue, socket}:any) => {
         q.setText('loading...')
         setQuill(q)
       }, []);
+
+      useEffect(()=>{
+        if(myrole === 'Viewer'){
+          quill.disable()
+        }
+        // let toolbar = document.getElementsByClassName("ql-toolbar ql-snow")
+        // toolbar?.classList?.add('hidden')
+        // console.log(toolbar)
+      },[myrole,socket, quill])
 
   return (
     <div className='' id='container' ref={wrapperRef} >

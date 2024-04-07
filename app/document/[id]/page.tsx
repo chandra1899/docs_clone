@@ -1,5 +1,6 @@
 "use client"
 import { BackDrop, Editor, RequestDocumentAccess, ShareBox } from '@/components';
+import { allowedToView } from '@/store/atoms/allowedToView';
 import { currentdocument } from '@/store/atoms/currentdocument';
 import { resValue1 } from '@/store/atoms/resValue1';
 import { resValue2 } from '@/store/atoms/resValue2';
@@ -7,12 +8,13 @@ import { sharehomeon } from '@/store/atoms/sharehomeon';
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon';
 import { shareprevopen } from '@/store/atoms/shareprevopen';
 import { sharesettingson } from '@/store/atoms/sharesettingson';
+import { yourrole } from '@/store/atoms/yourrole';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { io } from "socket.io-client";
 
 const page = () => {
@@ -24,24 +26,14 @@ const page = () => {
   const setSharehomeon=useSetRecoilState(sharehomeon)
   const setShareprevopen=useSetRecoilState(shareprevopen)
   const currentdocumentob=useRecoilValue(currentdocument)
-  const [arrivalContent, setArrivalContent] = useState(null);  
+  const [allowedtoview, setAllowedtoview] = useRecoilState(allowedToView)
+  const [myrole, setMyrole] = useRecoilState(yourrole)
   const [socket, setSocket] = useState();
   const {status,data:session} =useSession()
   const router = useRouter();
   const {id} = useParams()
-  const [value, setValue] = useState('');
   const [documentName, setDocumentName] = useState('');
-  const fetchDetailOfRoom =async ()=>{
-    let res=await axios.post('/api/roomdetails',{
-      roomName : id,
-    })
-    if(res.status === 200){
-      // console.log(res);
-      
-      setValue(res.data.document.content)
-      setDocumentName(res.data.document.documentName)
-    }
-  }
+
   const updateName = async (e:any)=>{    
     const newName = e.target.value===''?'Untitled Document':`${e.target.value}`
     let res=await axios.post('/api/renamedocument',{
@@ -51,39 +43,15 @@ const page = () => {
       setDocumentName(res.data.newName==='Untitled Document'?'':`${res.data.newName}`)
     }
   }
-  // const socketFunction=async ()=>{
-  //   let email=session?.user?.email
-  //   if(!email) return ;
-  //   await socket.emit('joinRoom', id,email);
-  //   await socket.on("connect", async () => {
-  //       console.log("SOCKET CONNECTED!", socket.id);
-  //     });
-
-  //     socket.on('changed', function (data) {
-  //       setArrivalContent(data)
-  //     });
-
-  //     socket.on('error', function (data) {
-  //       console.log(data || 'error');
-  //     });
-
-  //     socket.on('connect_failed', function (data) {
-  //       console.log(data || 'connect_failed');
-  //     });
-  //   }
-
-  useEffect(()=>{
-    // socketFunction()
-    console.log(session);
-    
-  },[session,socket])
-  useEffect(()=>{
-    // fetchDetailOfRoom()
-  },[session])
-  useEffect(() => {
-    arrivalContent && setValue(arrivalContent)
-  }, [arrivalContent]);
-
+  const findInPeople = ()=>{
+    let arr = currentdocumentob?.share?.peoplewithaccess
+    if(arr === undefined) return -1
+    for(let i=0;i<arr.length;i++){
+      if(arr[i].email === session?.user?.email) return i
+    }
+    return -1
+  }
+  
   useEffect(()=>{
     const s = io("http://localhost:3001/");
     setSocket(s)
@@ -95,9 +63,28 @@ const page = () => {
     setValue1(currentdocumentob?.share?.generalaccess?.value)
     setValue2(currentdocumentob?.share?.generalaccess?.role)
 },[currentdocumentob])
-  return <RequestDocumentAccess/>
+useEffect(()=>{
+  let ind = findInPeople()
+  if((session && currentdocumentob && currentdocumentob?.ownedBy?.email === session?.user?.email) || currentdocumentob?.share?.generalaccess?.value === "AnyOne with link" || ind !== -1){
+    setAllowedtoview(true)
+  }
+  else{
+    setAllowedtoview(false)
+  }
+  if(currentdocumentob?.share?.generalaccess?.value !== "Restricted"){
+    setMyrole(currentdocumentob?.share?.generalaccess?.role)
+  }
+  if(ind !== -1 && myrole !== 'Editor'){
+    setMyrole(currentdocumentob?.share?.peoplewithaccess[ind].role)
+  }
+  if(currentdocumentob?.ownedBy?.email === session?.user?.email){
+    setMyrole('owner')
+  }
+    
+},[session, currentdocumentob])
   return (
-    <div className='bg-slate-800'>
+    <>
+    {allowedtoview ? <div className='bg-slate-800'>
       <BackDrop/>
       {(shomeon || speopleaddon || ssettingson) && <ShareBox/>}
       <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black sticky top-0 z-[1]">
@@ -143,8 +130,11 @@ const page = () => {
     </div>
         </div>
       </div>
-        <Editor value = {value} setValue = {setValue} socket = {socket} />
-    </div>
+        <Editor socket = {socket} />
+    </div> :
+    <RequestDocumentAccess/>
+    }
+    </>
   )
 }
 
