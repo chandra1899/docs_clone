@@ -8,6 +8,7 @@ import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
 import { sharesettingson } from '@/store/atoms/sharesettingson'
 import ViewerHome from './ViewerHome'
+import RequestEditAccess from './RequestEditAccess'
 
 const ShareBox = () => {
   const shomeon=useRecoilValue(sharehomeon)
@@ -18,7 +19,8 @@ const ShareBox = () => {
       {/* {shomeon && <ShareHome/>}
       {speopleaddon && <SharePeople/>}
       {ssettingson && <ShareSettings/>} */}
-      <ViewerHome/>
+      {/* <ViewerHome/> */}
+      {/* <RequestEditAccess/> */}
     </div>
   )
 }

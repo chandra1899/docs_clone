@@ -1,5 +1,5 @@
 "use client"
-import { BackDrop, Editor, ShareBox } from '@/components';
+import { BackDrop, Editor, RequestDocumentAccess, ShareBox } from '@/components';
 import { currentdocument } from '@/store/atoms/currentdocument';
 import { resValue1 } from '@/store/atoms/resValue1';
 import { resValue2 } from '@/store/atoms/resValue2';
@@ -74,6 +74,8 @@ const page = () => {
 
   useEffect(()=>{
     // socketFunction()
+    console.log(session);
+    
   },[session,socket])
   useEffect(()=>{
     // fetchDetailOfRoom()
@@ -93,7 +95,7 @@ const page = () => {
     setValue1(currentdocumentob?.share?.generalaccess?.value)
     setValue2(currentdocumentob?.share?.generalaccess?.role)
 },[currentdocumentob])
-
+  return <RequestDocumentAccess/>
   return (
     <div className='bg-slate-800'>
       <BackDrop/>

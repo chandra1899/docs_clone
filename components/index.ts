@@ -14,6 +14,8 @@ import ViewerHome from './ViewerHome'
 import DropDown from './DropDown'
 import AccessEmailView from './AccessEmailView'
 import GeneralAccess from './GeneralAccess'
+import RequestEditAccess from './RequestEditAccess'
+import RequestDocumentAccess from './RequestDocumentAccess'
 
 export {
     LoginForm,
@@ -31,5 +33,7 @@ export {
     ViewerHome,
     DropDown,
     AccessEmailView,
-    GeneralAccess
+    GeneralAccess,
+    RequestEditAccess,
+    RequestDocumentAccess
 }
