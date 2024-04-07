@@ -10,6 +10,7 @@ import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
+import GeneralAccess from './GeneralAccess'
 
 const AccessEmailView = ({peopleob}:any)=>{
     const [dropOn, setDropon] = useState(false)
@@ -71,7 +72,7 @@ const AccessEmailView = ({peopleob}:any)=>{
             </div>
         </div>
         <div className='mr-4 relative'>
-            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre=>!pre))}>
+            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre)=>!pre)}>
                 <p >{value}</p>
                 <Image
                     src="/dropdown.png"
@@ -109,24 +110,11 @@ const AccessEmailView = ({peopleob}:any)=>{
     )
 }
 
-const GeneralAccess = ({value, setValue}:any)=>{
-    const {id : roomName} = useParams()
-    const [dropOn, setDropon] = useState(false)
-    const handlechange =async (generalaccess:String)=>{
-        console.log(generalaccess);
-        
-        let res = await axios.post('/api/homechange',{
-            generalaccess, roomName
-        })
-        if(res.status === 200){
-            setValue(generalaccess)
-            setDropon(false)
-        }
-    }
+const DropDown = ({value, resValue1, handlechange, dropOn, setDropon} : any)=>{
     return (
-        <div className='mr-4 relative'>
-            <div className='flex flex-row justify-start items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre=>!pre))}>
-                <p className='ml-2' >{value}</p>
+        <div className='mx-4 relative'>
+            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre:any)=>!pre)}>
+                <p >{value}</p>
                 <Image
                     src="/dropdown.png"
                     width={20}
@@ -135,30 +123,45 @@ const GeneralAccess = ({value, setValue}:any)=>{
                     className="cursor-pointer mx-2"
                 />
             </div>
-            {dropOn && <div className='z-10 absolute flex flex-col justify-center items-center p-2 bg-slate-800 ml-9 rounded-lg text-[0.9rem] w-[160px]'>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{handlechange('Restricted')}}>Restricted</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{handlechange('In this Organisation')}}>In this Organisation</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{handlechange('Any one with link')}}>Any one with link</p>
+            {dropOn && <div className='z-10 absolute flex flex-col justify-center items-center p-4 bg-slate-800 ml-9 rounded-lg text-[0.8rem] w-[160px]'>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{handlechange(resValue1, 'Viewer')}}>Viewer</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{handlechange(resValue1, 'Editor')}}>Editor</p>
             </div>}
         </div>
     )
 }
 
 const ShareHome = () => {
+    const {id : roomName} = useParams()
     const setShareprevopen=useSetRecoilState(shareprevopen)
     const setSpeopleaddon=useSetRecoilState(sharepeopleaddon)
     const semail=useRecoilValue(shareemail)
     const currentdocumentob=useRecoilValue(currentdocument)
     const {id} = useParams()
-    const [resValue, setResValue] = useState('')
+    const [resValue1, setResValue1] = useState('')
+    const [resValue2, setResValue2] = useState('')
+    const [dropOn1, setDropon1] = useState(false)
+    const [dropOn2, setDropon2] = useState(false)
     const setSharesettingson=useSetRecoilState(sharesettingson)
     const setShareemail=useSetRecoilState(shareemail)
     const setSharehomeon=useSetRecoilState(sharehomeon)
     const handleCopiedClick=()=>{
         navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
       }
+      const handlechange =async (generalaccessValue:String, generalaccessRole:String)=>{
+        let res = await axios.post('/api/homechange',{
+            generalaccessValue, generalaccessRole, roomName
+        })
+        if(res.status === 200){
+            setDropon1(false)
+            setDropon2(false)
+            setResValue1(generalaccessValue)
+            setResValue2(generalaccessRole)
+        }
+    }
     useEffect(()=>{
-        setResValue(currentdocumentob?.share?.generalaccess)
+        setResValue1(currentdocumentob?.share?.generalaccess?.value)
+        setResValue2(currentdocumentob?.share?.generalaccess?.role)
     },[currentdocumentob])
   return (
     <div className='pl-4'>
@@ -223,21 +226,21 @@ const ShareHome = () => {
       <div>
       <p className='font-medium mt-2'>General access</p>
       <div className='flex flex-row justify-start items-center ml-2 my-2 '>
-                    {resValue ==='Restricted' && <Image
+                    {resValue1 ==='Restricted' && <Image
                     src="/lock.png"
                     width={28}
                     height={28}
                     alt="lock"
                     className="bg-[#555] rounded-full p-1"
                 />}
-                    {resValue === 'In this Organisation' && <Image
+                    {resValue1 === 'In this Organisation' && <Image
                     src="/organisation.png"
                     width={28}
                     height={28}
                     alt="lock"
                     className="bg-blue-700 rounded-full p-1"
                 />}
-                    {resValue ==='Any one with link' && <Image
+                    {resValue1 ==='AnyOne with link' && <Image
                     src="/globe.png"
                     width={28}
                     height={28}
@@ -245,11 +248,12 @@ const ShareHome = () => {
                     className="bg-green-600 rounded-full p-1"
                 />}
                 <div className='ml-1'>
-                    <GeneralAccess value = {resValue} setValue = {setResValue}/>
-                    {resValue ==='Restricted' && <p className='text-[0.8rem] font-normal ml-3'>Only people with access can open with the link</p>}
-                    {resValue === 'In this Organisation' && <p className='text-[0.8rem] font-normal ml-3'>Anyone in this group with the link can view</p>}
-                    {resValue ==='Any one with link' && <p className='text-[0.8rem] font-normal ml-3'>Anyone on the internet with the link can view</p>}
+                    <GeneralAccess value = {resValue1} setValue = {setResValue2} handlechange = {handlechange} dropOn = {dropOn1} setDropon = {setDropon1} />
+                    {resValue1 ==='Restricted' && <p className='text-[0.8rem] font-normal ml-3'>Only people with access can open with the link</p>}
+                    {resValue1 === 'In this Organisation' && <p className='text-[0.8rem] font-normal ml-3'>Anyone in this group with the link can view</p>}
+                    {resValue1 ==='AnyOne with link' && <p className='text-[0.8rem] font-normal ml-3'>Anyone on the internet with the link can view</p>}
                 </div>
+                {resValue1 !=='Restricted' && <DropDown value = {resValue2} setValue = {setResValue2} handlechange = {handlechange} dropOn = {dropOn2} setDropon = {setDropon2} resValue1 = {resValue1} />}
       </div>
       </div>
       <div className='flex flex-row justify-between items-center mx-2'>

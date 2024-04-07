@@ -17,15 +17,33 @@ const documentSchema = new Schema({
     },
     share: {
         generalaccess: {
-            type: String,
-            required: true,
-            enum: ["Restricted", "In this Organisation", "Any one with link"],
-            default: "Restricted"
+            value : {
+                type: String,
+                required: true,
+                enum: ["Restricted", "In this Organisation", "AnyOne with link"],
+                default: "Restricted",
+            },
+            role : {
+                type : String,
+                required: true,
+                enum: ["Viewer", "Editor"],
+                default: "Viewer",
+            }
         },
         peoplewithaccess: [{
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Peoplewithaccess'
         }]
+    },
+    settings : {
+        s1 : {
+            type : Boolean,
+            default : true
+        },
+        s2 : {
+            type : Boolean,
+            default : true
+        }
     }
 }, { timestamps: true });
 

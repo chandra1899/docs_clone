@@ -9,6 +9,7 @@ import BackDrop from './BackDrop'
 import ShareHome from './ShareHome'
 import SharePeople from './SharePeople'
 import ShareSettings from './ShareSettings'
+import GeneralAccess from './GeneralAccess'
 
 export {
     LoginForm,
@@ -21,5 +22,6 @@ export {
     BackDrop,
     ShareHome,
     SharePeople,
-    ShareSettings
+    ShareSettings,
+    GeneralAccess
 }

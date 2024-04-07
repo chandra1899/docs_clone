@@ -5,13 +5,11 @@ import User from '@/models/user'
 
 export async function POST(req:Request){
     try {
-        const {generalaccessValue, generalaccessRole, roomName}=await req.json()
-        
-        await connectMongoDB()
+        const {s1, s2, roomName}=await req.json()
         let document = await Document.findOne({roomName})
-        document.share.generalaccess.value = generalaccessValue
-        document.share.generalaccess.role = generalaccessRole
-        await document.save();
+        document.settings.s1 = s1;
+        document.settings.s2 = s2;
+        await document.save()
         
         return NextResponse.json({},{status:200})
     } catch (error) {
