@@ -14,7 +14,6 @@ import { yourrole } from '@/store/atoms/yourrole';
 
 const Editor = ({socket}:any) => {
     // const {status,data:session} =useSession()
-    const setCurrentDocument = useSetRecoilState(currentdocument)
     const myrole = useRecoilValue(yourrole)
     const {id} = useParams()
     const [quill, setQuill] = useState()
@@ -43,12 +42,11 @@ const Editor = ({socket}:any) => {
       useEffect(()=>{
         if(socket == null || quill == null) return 
 
-        socket.on('load_document', (document:any)=>{
-          console.log('load document data', document);
-          setCurrentDocument(document)
-          console.log(document);
+        socket.on('load_document', (data:any)=>{
+          console.log('load document data', data);
+          console.log(data);
           
-          quill.setContents(document.contents)
+          quill.setContents(data)
           quill.enable()
         })
         socket.emit("get_document", id)
@@ -87,7 +85,7 @@ const Editor = ({socket}:any) => {
           if(source !== 'user') return 
           socket.emit('send-changes', delta)
         }
-        
+        if(quill == null) return 
         quill?.on('text-change',handler)
         return ()=>{
           quill?.off('text-change',handler)
@@ -104,12 +102,14 @@ const Editor = ({socket}:any) => {
         } } )
         q.disable()
         q.setText('loading...')
+        // console.log(q);
+        
         setQuill(q)
       }, []);
 
       useEffect(()=>{
-        if(myrole === 'Viewer'){
-          quill.disable()
+        if(myrole === 'Viewer' && quill !== undefined){          
+          quill?.disable()
         }
         // let toolbar = document.getElementsByClassName("ql-toolbar ql-snow")
         // toolbar?.classList?.add('hidden')

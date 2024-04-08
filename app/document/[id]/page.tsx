@@ -2,12 +2,14 @@
 import { BackDrop, Editor, RequestDocumentAccess, ShareBox } from '@/components';
 import { allowedToView } from '@/store/atoms/allowedToView';
 import { currentdocument } from '@/store/atoms/currentdocument';
+import { peoplewithaccess } from '@/store/atoms/peoplewithaccess';
 import { resValue1 } from '@/store/atoms/resValue1';
 import { resValue2 } from '@/store/atoms/resValue2';
 import { sharehomeon } from '@/store/atoms/sharehomeon';
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon';
 import { shareprevopen } from '@/store/atoms/shareprevopen';
 import { sharesettingson } from '@/store/atoms/sharesettingson';
+import { sharevieweron } from '@/store/atoms/sharevieweron';
 import { yourrole } from '@/store/atoms/yourrole';
 import axios from 'axios';
 import { useSession } from 'next-auth/react';
@@ -18,9 +20,12 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { io } from "socket.io-client";
 
 const page = () => {
+  const setPwithaccess = useSetRecoilState(peoplewithaccess)
   const setValue1 = useSetRecoilState(resValue1)
   const setValue2 = useSetRecoilState(resValue2)
   const shomeon=useRecoilValue(sharehomeon)
+  const setSharevieweron=useSetRecoilState(sharevieweron)
+  const svieweron=useRecoilValue(sharevieweron)
   const speopleaddon=useRecoilValue(sharepeopleaddon)
   const ssettingson=useRecoilValue(sharesettingson)
   const setSharehomeon=useSetRecoilState(sharehomeon)
@@ -33,7 +38,7 @@ const page = () => {
   const router = useRouter();
   const {id} = useParams()
   const [documentName, setDocumentName] = useState('');
-
+  const setCurrentDocument = useSetRecoilState(currentdocument)
   const updateName = async (e:any)=>{    
     const newName = e.target.value===''?'Untitled Document':`${e.target.value}`
     let res=await axios.post('/api/renamedocument',{
@@ -43,11 +48,10 @@ const page = () => {
       setDocumentName(res.data.newName==='Untitled Document'?'':`${res.data.newName}`)
     }
   }
-  const findInPeople = ()=>{
-    let arr = currentdocumentob?.share?.peoplewithaccess
+  const findInPeople = (arr:any)=>{
     if(arr === undefined) return -1
     for(let i=0;i<arr.length;i++){
-      if(arr[i].email === session?.user?.email) return i
+      if(arr[i].user.email === session?.user?.email) return i
     }
     return -1
   }
@@ -63,30 +67,50 @@ const page = () => {
     setValue1(currentdocumentob?.share?.generalaccess?.value)
     setValue2(currentdocumentob?.share?.generalaccess?.role)
 },[currentdocumentob])
-useEffect(()=>{
-  let ind = findInPeople()
-  if((session && currentdocumentob && currentdocumentob?.ownedBy?.email === session?.user?.email) || currentdocumentob?.share?.generalaccess?.value === "AnyOne with link" || ind !== -1){
-    setAllowedtoview(true)
+const getDocumentDetails = async ()=>{
+  try {
+    let res = await axios.post('/api/roomdetails',{
+      roomName : id
+    })
+    if(res.status === 200){
+      console.log(res.data.document);
+      console.log(res.data.getpeoplewithaccess);
+      setPwithaccess(res.data.getpeoplewithaccess)
+      setCurrentDocument(res.data.document)
+      let ind = findInPeople(res.data.getpeoplewithaccess)
+      console.log('ind', ind);
+      
+      if((session && res.data.document?.ownedBy?.email === session?.user?.email) || res.data.document?.share?.generalaccess?.value === "AnyOne with link" || ind !== -1){
+        setAllowedtoview(true)
+      }
+      else{
+        setAllowedtoview(false)
+      }
+      if(res.data.document?.share?.generalaccess?.value !== "Restricted"){
+        setMyrole(res.data.document?.share?.generalaccess?.role)
+      }
+      if(ind !== -1 && res.data.document?.share?.generalaccess?.role !== 'Editor'){
+        // console.log(res.data.getpeoplewithaccess[ind].role);
+        setMyrole(res.data.getpeoplewithaccess[ind].role)
+      }
+      if(res.data.document?.ownedBy?.email === session?.user?.email){
+        setMyrole('owner')
+      }
+      // console.log(res.data.document?.share?.generalaccess?.role);
+      
+    }
+  } catch (error) {
+    console.log('error', error);
+  } 
   }
-  else{
-    setAllowedtoview(false)
-  }
-  if(currentdocumentob?.share?.generalaccess?.value !== "Restricted"){
-    setMyrole(currentdocumentob?.share?.generalaccess?.role)
-  }
-  if(ind !== -1 && myrole !== 'Editor'){
-    setMyrole(currentdocumentob?.share?.peoplewithaccess[ind].role)
-  }
-  if(currentdocumentob?.ownedBy?.email === session?.user?.email){
-    setMyrole('owner')
-  }
-    
-},[session, currentdocumentob])
+    useEffect(()=>{
+      getDocumentDetails()
+    },[session])
   return (
     <>
     {allowedtoview ? <div className='bg-slate-800'>
       <BackDrop/>
-      {(shomeon || speopleaddon || ssettingson) && <ShareBox/>}
+      {(shomeon || speopleaddon || ssettingson || svieweron) && <ShareBox/>}
       <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black sticky top-0 z-[1]">
         <div className="flex flex-row relative items-center">
         <Image
@@ -115,7 +139,18 @@ useEffect(()=>{
       </div>
         </div>
         <div className='flex flex-row justify-center items-center'>
-            <div className='flex flex-row justify-center items-center bg-[#2b88eb] h-[40px] w-[100px] rounded-r-full rounded-l-full cursor-pointer hover:bg-[#165190]' onClick={()=>{setSharehomeon(true);setShareprevopen("home")}}>
+            <div className='flex flex-row justify-center items-center bg-[#2b88eb] h-[40px] w-[100px] rounded-r-full rounded-l-full cursor-pointer hover:bg-[#165190]' onClick={()=>{
+              setSharehomeon(false)
+              setSharevieweron(false)
+              if(myrole === 'owner' || myrole === 'Editor'){
+                setSharehomeon(true)
+                setShareprevopen("home")
+              }
+              else{
+                // setSharehomeon(true)
+                setSharevieweron(true)
+              }
+              }}>
             <Image
               src="/lock.png"
               width={25}

@@ -16,6 +16,8 @@ import { resValue1 } from '@/store/atoms/resValue1'
 import { dropOn1 } from '@/store/atoms/dropOn1'
 import { dropOn2 } from '@/store/atoms/dropOn2'
 import { yourrole } from '@/store/atoms/yourrole'
+import { sharevieweron } from '@/store/atoms/sharevieweron'
+import { peoplewithaccess } from '@/store/atoms/peoplewithaccess'
 
 
 
@@ -24,6 +26,8 @@ const ShareHome = () => {
     const setSpeopleaddon=useSetRecoilState(sharepeopleaddon)
     const semail=useRecoilValue(shareemail)
     const currentdocumentob=useRecoilValue(currentdocument)
+    const pwithaccess=useRecoilValue(peoplewithaccess)
+    const setSharevieweron=useSetRecoilState(sharevieweron)
     const {id} = useParams()
     const setSharesettingson=useSetRecoilState(sharesettingson)
     const setShareemail=useSetRecoilState(shareemail)
@@ -56,9 +60,14 @@ const ShareHome = () => {
         onChange={(e:any)=>{setShareemail(e.target.value)}}
         />
         <button className='h-[40px] w-[50px] flex justify-center items-center bg-green-600 hover:bg-green-700 rounded-lg mx-4' onClick={()=>{
+          setSharehomeon(false)
+          if(myrole === 'Editor' && currentdocumentob?.settings.s1 === false){
+            setSharevieweron(true)
+          }
+          else{
             setShareprevopen("people")
-            setSharehomeon(false)
             setSpeopleaddon(true)
+          }
         }}>
             <Image
                 src="/arrow_right.png"
@@ -90,7 +99,7 @@ const ShareHome = () => {
         </div>
            
         </div>
-        {currentdocumentob?.share?.peoplewithaccess?.map((peopleob:any)=>(
+        {pwithaccess.map((peopleob:any)=>(
             <AccessEmailView peopleob = {peopleob} />
         ))}
       </div>

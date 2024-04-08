@@ -1,7 +1,7 @@
 import {NextResponse } from 'next/server'
 import { connectMongoDB } from '@/config/mongoose'
 import Document from '@/models/document'
-import Peoplewithaccess from '@/models/peoplewithaccess'
+import PeopleWithAccess from '@/models/peoplewithaccess'
 
 export async function POST(req:Request){
     try {
@@ -13,7 +13,7 @@ export async function POST(req:Request){
         
         
         await connectMongoDB()
-        let peoplewithaccess = await Peoplewithaccess.findById(_id)
+        let peoplewithaccess = await PeopleWithAccess.findById(_id)
         peoplewithaccess.role = role
         peoplewithaccess.expirationOn = expirationOn
         peoplewithaccess.expirationDate = expirationDate

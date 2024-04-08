@@ -32,7 +32,7 @@ const documentSchema = new Schema({
         },
         peoplewithaccess: [{
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Peoplewithaccess'
+            ref: 'PeopleWithAccess'
         }]
     },
     settings : {

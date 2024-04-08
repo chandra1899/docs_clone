@@ -40,7 +40,7 @@ const GeneralAccess = () => {
                     className="bg-green-600 rounded-full p-1"
                 />}
                 <div className='ml-1'>
-                    {myrole === 'Viewer' ? <p className='text-slate-300 text-[0.9rem] ml-3'>{Value1}</p> :
+                    {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.9rem] ml-3'>{Value1}</p> :
                     <GeneralAccessDropDown/>}
                     {Value1 ==='Restricted' && <p className='text-[0.8rem] font-normal ml-3'>Only people with access can open with the link</p>}
                     {Value1 === 'In this Organisation' && <p className='text-[0.8rem] font-normal ml-3'>Anyone in this group with the link can view</p>}

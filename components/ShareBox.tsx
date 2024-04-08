@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import ShareHome from './ShareHome'
 import SharePeople from './SharePeople'
 import ShareSettings from './ShareSettings'
@@ -10,18 +10,22 @@ import { sharesettingson } from '@/store/atoms/sharesettingson'
 import ViewerHome from './ViewerHome'
 import RequestEditAccess from './RequestEditAccess'
 import { yourrole } from '@/store/atoms/yourrole'
+import { currentdocument } from '@/store/atoms/currentdocument'
+import { sharevieweron } from '@/store/atoms/sharevieweron'
 
 const ShareBox = () => {
   const shomeon=useRecoilValue(sharehomeon)
   const speopleaddon=useRecoilValue(sharepeopleaddon)
   const ssettingson=useRecoilValue(sharesettingson)
+  const svieweron = useRecoilValue(sharevieweron)
   const myrole = useRecoilValue(yourrole)
+  const currentdocumentob = useRecoilValue(currentdocument)
   return (
     <div className='absolute w-[80vh] max-w-[600px] bg-black z-10 top-16 left-[32%] rounded-lg p-5 pb-8'>
       {(myrole === 'Editor' || myrole === 'owner') && shomeon && <ShareHome/>}
       {speopleaddon && <SharePeople/>}
       {myrole === 'owner' && ssettingson && <ShareSettings/>}
-      {(myrole === 'Viewer') && shomeon && <ViewerHome/>}
+      {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) && svieweron && <ViewerHome/>}
       {/* <RequestEditAccess/> */}
     </div>
   )
