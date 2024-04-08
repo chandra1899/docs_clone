@@ -1,5 +1,6 @@
 "use client"
 import { currentdocument } from '@/store/atoms/currentdocument'
+import { message } from '@/store/atoms/message'
 import { shareemail } from '@/store/atoms/shareemail'
 import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
@@ -42,6 +43,9 @@ const SharePeople = () => {
     const setSsettingson=useSetRecoilState(sharesettingson)
     const setShareemail=useSetRecoilState(shareemail)
     const setCurrentdocument=useSetRecoilState(currentdocument)
+    const setMsg=useSetRecoilState(message)
+    const msg = useRecoilValue(message)
+    const currentdocumentob = useRecoilValue(currentdocument)
     const semail = useRecoilValue(shareemail)
     const myrole = useRecoilValue(yourrole)
     const {id} = useParams()
@@ -69,7 +73,9 @@ const SharePeople = () => {
         role,
         expirationOn : expiration,
         expirationDate ,
-        roomName : id     
+        roomName : id,
+        notify : notifyOn,
+        msg 
       })
       if(res.status === 200 && res?.data?.people != undefined){
         let insert = res?.data?.people
@@ -140,7 +146,7 @@ const SharePeople = () => {
        onChange={()=>setNotifyOn((pre)=>!pre)}
          />
       <label htmlFor="notify" className='text-[0.9rem] font-normal'>Notify people</label>
-      {notifyOn && <textarea className='bg-black text-white w-[90%] rounded-xl border-2 border-blue-600 h-[150px] p-3 ml-4 my-4' placeholder='Message' name="" id=""></textarea>}
+      {notifyOn && <textarea value={msg} onChange={(e)=>setMsg(e.target.value)} className='bg-black text-white w-[90%] rounded-xl border-2 border-blue-600 h-[150px] p-3 ml-4 my-4' placeholder='Message' name="" id=""></textarea>}
       <div className={`flex flex-row justify-between items-center mx-4 ${notifyOn?``:`mt-5`}`}>
         <Image
                 src="/link.png"
@@ -159,8 +165,7 @@ const SharePeople = () => {
                     setShareemail("")
                 }}
                 >cancel</p>
-                {notifyOn?<p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full'>Send</p>
-                :<p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full' onClick={handleShare} >Share</p>}
+               <p className='bg-blue-600 h-[40px] w-[80px] hover:bg-blue-700 cursor-pointer border-2 border-blue-600 flex justify-center items-center rounded-l-full rounded-r-full' onClick={handleShare} >{notifyOn?`Share`: `Send`}</p>
             </div>
       </div>
     </div>

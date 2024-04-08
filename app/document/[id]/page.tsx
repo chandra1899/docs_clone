@@ -3,6 +3,7 @@ import { BackDrop, Editor, RequestDocumentAccess, ShareBox } from '@/components'
 import { allowedToView } from '@/store/atoms/allowedToView';
 import { currentdocument } from '@/store/atoms/currentdocument';
 import { peoplewithaccess } from '@/store/atoms/peoplewithaccess';
+import { requestediton } from '@/store/atoms/requestediton';
 import { resValue1 } from '@/store/atoms/resValue1';
 import { resValue2 } from '@/store/atoms/resValue2';
 import { sharehomeon } from '@/store/atoms/sharehomeon';
@@ -39,6 +40,8 @@ const page = () => {
   const {id} = useParams()
   const [documentName, setDocumentName] = useState('');
   const setCurrentDocument = useSetRecoilState(currentdocument)
+  const setRequestedit = useSetRecoilState(requestediton)
+  const requestedit=useRecoilValue(requestediton)
   const updateName = async (e:any)=>{    
     const newName = e.target.value===''?'Untitled Document':`${e.target.value}`
     let res=await axios.post('/api/renamedocument',{
@@ -110,7 +113,7 @@ const getDocumentDetails = async ()=>{
     <>
     {allowedtoview ? <div className='bg-slate-800'>
       <BackDrop/>
-      {(shomeon || speopleaddon || ssettingson || svieweron) && <ShareBox/>}
+      {(shomeon || speopleaddon || ssettingson || svieweron || requestedit) && <ShareBox/>}
       <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black sticky top-0 z-[1]">
         <div className="flex flex-row relative items-center">
         <Image
@@ -139,6 +142,7 @@ const getDocumentDetails = async ()=>{
       </div>
         </div>
         <div className='flex flex-row justify-center items-center'>
+            {myrole === 'Viewer' && <p className='h-[40px] text-[0.85rem] text-slate-200 border-2 border-blue-600 hover:bg-slate-800 p-2 rounded-r-full rounded-l-full cursor-pointer mx-3' onClick={()=>setRequestedit(true)} >Request Edit access</p>}
             <div className='flex flex-row justify-center items-center bg-[#2b88eb] h-[40px] w-[100px] rounded-r-full rounded-l-full cursor-pointer hover:bg-[#165190]' onClick={()=>{
               setSharehomeon(false)
               setSharevieweron(false)
@@ -161,7 +165,7 @@ const getDocumentDetails = async ()=>{
                 <p className='mt-1'>Share</p>
             </div>
         <div className="flex flex-row justify-center items-center rounded-full h-[80%] w-[60px] bg-[#6029e1] mx-6 text-[1.5rem] font-mono">
-      f
+              {session?.user?.name[0]}
     </div>
         </div>
       </div>

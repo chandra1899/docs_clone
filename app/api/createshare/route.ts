@@ -3,10 +3,13 @@ import { connectMongoDB } from '@/config/mongoose'
 import PeopleWithAccess from '@/models/peoplewithaccess'
 import User from '@/models/user'
 import Document from '@/models/document'
+import Sharefile from '@/mailers/sharedfile'
 
 export async function POST(req:Request){
     try {
-        const {email,role,expirationOn,expirationDate, roomName}=await req.json()
+        const {email,role,expirationOn,expirationDate, roomName, notify, msg}=await req.json()
+        console.log(email,notify, msg);
+        
         await connectMongoDB()
         let user = await User.findOne({email})
         if(!user) return NextResponse.json({message:'email not found'},{status:404})
@@ -17,14 +20,19 @@ export async function POST(req:Request){
             expirationOn,
             expirationDate
         })
-        let document = await Document.findOne({roomName})
+        let document = await Document.findOne({roomName}).populate('ownedBy')
+        console.log(document.ownedBy.email);
+        
+        if(notify) {
+            Sharefile(document.ownedBy.email, email, msg, roomName)
+        }
         document.share.peoplewithaccess.push(people._id)
         await document.save()
         people = await people.populate({
             path : 'user',
             select : '-password'
         })
-        console.log(people);
+        // console.log(people);
         
         
         return NextResponse.json({people},{status:200})
