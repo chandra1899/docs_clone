@@ -21,6 +21,8 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { io } from "socket.io-client";
 
 const page = () => {
+  const [modeDropOn, setModeDropOn] = useState(false)
+  const [currDocMode, setCurrDocMode] = useState('')
   const setPwithaccess = useSetRecoilState(peoplewithaccess)
   const setValue1 = useSetRecoilState(resValue1)
   const setValue2 = useSetRecoilState(resValue2)
@@ -106,6 +108,9 @@ const getDocumentDetails = async ()=>{
     console.log('error', error);
   } 
   }
+  const handleprint = () => {
+    window.print();
+  }
     useEffect(()=>{
       getDocumentDetails()
     },[session])
@@ -114,7 +119,7 @@ const getDocumentDetails = async ()=>{
     {allowedtoview ? <div className='bg-slate-800'>
       <BackDrop/>
       {(shomeon || speopleaddon || ssettingson || svieweron || requestedit) && <ShareBox/>}
-      <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black sticky top-0 z-[1]">
+      <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black sticky top-0 z-[2]">
         <div className="flex flex-row relative items-center">
         <Image
         src="/docs_img.png"
@@ -134,10 +139,40 @@ const getDocumentDetails = async ()=>{
         className='bg-black w-auto'
          />
         <div className='flex flex-row justify-between items-center text-[0.9rem]'>
-            <p className='mr-3'>File</p>
-            <p className='mr-3'>Edit</p>
-            <p className='mr-3'>View</p>
-            <p className='mr-3'>Extensions</p>
+            <p className='mr-3 hover:text-blue-600 cursor-pointer' onClick={handleprint}>Print</p>
+            <div className='mr-3 relative'>
+            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:text-blue-600 p-2 text-[0.9rem]' onClick={()=>setModeDropOn((pre:any)=>!pre)}>
+                <p >mode</p>
+            </div>
+            {modeDropOn && <div className='absolute flex flex-col justify-center items-center p-2 bg-black mr-4 rounded-lg text-[0.8rem] w-[120px]'>
+            <div className='flex flex-row justify-start items-center w-[100%] '>
+                    <div className='flex justify-start items-center h-[30px] w-[30px]'>
+                        {currDocMode === "View" && <Image
+                        src="/tick.png"
+                        width={30}
+                        height={30}
+                        alt="tick"
+                        className="cursor-pointer"
+                        />}
+                    </div>
+                    <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('View');setModeDropOn(false)}} >View</p>
+                </div>
+            <div className='flex flex-row justify-start items-center w-[100%] '>
+                    <div className='flex justify-start items-center h-[30px] w-[30px]'>
+                        {currDocMode === "Edit" && <Image
+                        src="/tick.png"
+                        width={30}
+                        height={30}
+                        alt="tick"
+                        className="cursor-pointer"
+                        />}
+                    </div>
+                    <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('Edit');setModeDropOn(false)}}>Edit</p>
+                </div>
+            </div>}
+        </div>
+            <p className='mr-3 hover:text-blue-600 cursor-pointer'>Extensions</p>
+            <p className='mr-3 hover:text-blue-600 cursor-pointer'>help</p>
         </div>
       </div>
         </div>
