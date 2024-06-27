@@ -23,7 +23,7 @@ const ShareBox = () => {
   const requestedit=useRecoilValue(requestediton)
   const currentdocumentob = useRecoilValue(currentdocument)
   return (
-    <div className='absolute w-[80vh] max-w-[600px] bg-black z-10 top-16 left-[32%] rounded-lg p-5 pb-8'>
+    <div className='fixed w-[80vh] max-w-[600px] bg-black z-10 top-16 left-[32%] rounded-lg p-5 pb-8'>
       {(myrole === 'Editor' || myrole === 'owner') && shomeon && <ShareHome/>}
       {speopleaddon && <SharePeople/>}
       {myrole === 'owner' && ssettingson && <ShareSettings/>}

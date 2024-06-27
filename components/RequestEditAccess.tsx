@@ -1,3 +1,4 @@
+"use client"
 import { currentdocument } from "@/store/atoms/currentdocument"
 import { message } from "@/store/atoms/message"
 import { requestediton } from "@/store/atoms/requestediton"

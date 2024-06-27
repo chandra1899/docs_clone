@@ -22,7 +22,7 @@ import { io } from "socket.io-client";
 
 const page = () => {
   const [modeDropOn, setModeDropOn] = useState(false)
-  const [currDocMode, setCurrDocMode] = useState('')
+  const [currDocMode, setCurrDocMode] = useState('Edit')
   const setPwithaccess = useSetRecoilState(peoplewithaccess)
   const setValue1 = useSetRecoilState(resValue1)
   const setValue2 = useSetRecoilState(resValue2)
@@ -102,7 +102,6 @@ const getDocumentDetails = async ()=>{
         setMyrole('owner')
       }
       // console.log(res.data.document?.share?.generalaccess?.role);
-      
     }
   } catch (error) {
     console.log('error', error);
@@ -141,33 +140,33 @@ const getDocumentDetails = async ()=>{
         <div className='flex flex-row justify-between items-center text-[0.9rem]'>
             <p className='mr-3 hover:text-blue-600 cursor-pointer' onClick={handleprint}>Print</p>
             <div className='mr-3 relative'>
-            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:text-blue-600 p-2 text-[0.9rem]' onClick={()=>setModeDropOn((pre:any)=>!pre)}>
-                <p >mode</p>
+            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:text-blue-600 p-2 text-[0.9rem]' onClick={()=>{if(myrole === 'Viewer') return ;setModeDropOn((pre:any)=>!pre)}}>
+                <p className={`${myrole === 'Viewer'?'text-slate-400 cursor-default':''}`} >mode</p>
             </div>
-            {modeDropOn && <div className='absolute flex flex-col justify-center items-center p-2 bg-black mr-4 rounded-lg text-[0.8rem] w-[120px]'>
-            <div className='flex flex-row justify-start items-center w-[100%] '>
+            {modeDropOn && <div className='absolute flex flex-col justify-center items-center p-2 bg-black mr-4 rounded-lg text-[0.8rem] w-[100px]'>
+            <div className='flex flex-row justify-center items-center w-[100%] '>
                     <div className='flex justify-start items-center h-[30px] w-[30px]'>
                         {currDocMode === "View" && <Image
                         src="/tick.png"
-                        width={30}
-                        height={30}
+                        width={20}
+                        height={20}
                         alt="tick"
                         className="cursor-pointer"
                         />}
                     </div>
-                    <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('View');setModeDropOn(false)}} >View</p>
+                    <p className='my-1 cursor-pointer hover:bg-slate-700 p-1 px-2 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('View');setModeDropOn(false)}} >View</p>
                 </div>
-            <div className='flex flex-row justify-start items-center w-[100%] '>
+            <div className='flex flex-row justify-center items-center w-[100%] '>
                     <div className='flex justify-start items-center h-[30px] w-[30px]'>
                         {currDocMode === "Edit" && <Image
                         src="/tick.png"
-                        width={30}
-                        height={30}
+                        width={20}
+                        height={20}
                         alt="tick"
                         className="cursor-pointer"
                         />}
                     </div>
-                    <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('Edit');setModeDropOn(false)}}>Edit</p>
+                    <p className='my-1 cursor-pointer hover:bg-slate-700 p-1 px-2 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('Edit');setModeDropOn(false)}}>Edit</p>
                 </div>
             </div>}
         </div>
@@ -204,7 +203,7 @@ const getDocumentDetails = async ()=>{
     </div>
         </div>
       </div>
-        <Editor socket = {socket} />
+        <Editor socket = {socket} currDocMode = {currDocMode} />
     </div> :
     <RequestDocumentAccess/>
     }
