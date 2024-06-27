@@ -2,7 +2,7 @@
 export const Toolbar_Options =  [
     ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
     ['blockquote', 'code-block'],
-    ['link', 'image', 'video', 'formula'],
+    ['link', 'image'],
   
     [{ 'header': 1 }, { 'header': 2 }],               // custom button values
     [{ 'list': 'ordered'}, { 'list': 'bullet' }, { 'list': 'check' }],

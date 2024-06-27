@@ -9,12 +9,12 @@ import { yourrole } from '@/store/atoms/yourrole';
 import ReactQuill from 'react-quill';
 
 const Editor = ({socket, currDocMode}:any) => {
-    const {status,data:session} =useSession()
+    const {status,data:session} = useSession()
     const myRole = useRecoilValue(yourrole)
     const {id} = useParams()
     const editor = useRef<ReactQuill>(null)
     const [connectionEstablished, setConnectionEstablished] = useState(false)
-    // const [toolBar, setToolBar] = useState<any>(Toolbar_Options)
+    const [openToolBar, setOpenToolBar] = useState(false)
 
     const saveDocument = async () => {
       if(myRole === 'Viewer') return ;
@@ -39,9 +39,6 @@ const Editor = ({socket, currDocMode}:any) => {
           }
       }
       useEffect(() => {        
-        console.log("chandra", document.getElementById('chandra'));
-        console.log("chandra", document.getElementById('ql-toolbar'));
-        
         editor.current?.getEditor().disable()
         if(socket == null || editor.current == null) return ;
         setConnectionEstablished(false)
@@ -72,7 +69,7 @@ const Editor = ({socket, currDocMode}:any) => {
                 setConnectionEstablished(true)
                 if(myRole !== 'Viewer'){
                   editor.current?.getEditor().enable()
-                  // setToolBar(false)
+                  setOpenToolBar(true)
                 }
               }            
             } catch (error) {
@@ -108,10 +105,39 @@ const Editor = ({socket, currDocMode}:any) => {
 
       useEffect(() => {
         if(socket == null || editor.current == null || connectionEstablished == false) return ;
+        const quillToolBar = document.getElementById('elementQuill')?.children[0] as HTMLElement
+        if(openToolBar){
+          quillToolBar.style.display = 'flex';
+          quillToolBar.style.justifyContent = 'center';
+        }
+        else {
+          quillToolBar.style.display = 'none';
+        }
+      }, [openToolBar, socket, editor.current, connectionEstablished])
+
+      useEffect(() => {
+        if(socket == null || editor.current == null || connectionEstablished == false) return ;
+        const quillToolBar = document.getElementById('elementQuill')?.children[0] as HTMLElement
+        
+        if(myRole !== 'Viewer'){
+          editor.current?.getEditor().enable()
+          quillToolBar.style.display = 'flex';
+          quillToolBar.style.justifyContent = 'center';
+        }
+        else {
+          editor.current?.getEditor().disable()
+          quillToolBar.style.display = 'none';
+        }
+      }, [myRole, socket, editor.current, connectionEstablished])
+
+      useEffect(() => {
+        if(socket == null || editor.current == null || connectionEstablished == false) return ;
         if(currDocMode == 'Edit' && myRole !== 'Viewer'){
           editor.current?.getEditor().enable()
+          setOpenToolBar(true)
         }
         else{
+          setOpenToolBar(false)
           editor.current?.getEditor().disable()
         }
       }, [currDocMode, socket, editor.current, connectionEstablished])
@@ -121,7 +147,7 @@ const Editor = ({socket, currDocMode}:any) => {
           socket.emit('send-changes', delta)
       }
 
-  return <ReactQuill id='chandra' theme="snow" ref={editor} onChange={handleOnChange} modules={modules_toolBar} />;
+  return <ReactQuill id='elementQuill' theme="snow" ref={editor} onChange={handleOnChange} modules={modules_toolBar} />;
 }
 
 export default Editor

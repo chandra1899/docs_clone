@@ -16,7 +16,7 @@ import axios from 'axios';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { io } from "socket.io-client";
 
@@ -41,18 +41,11 @@ const page = () => {
   const router = useRouter();
   const {id} = useParams()
   const [documentName, setDocumentName] = useState('');
+  const documentNameRef = useRef(documentName);
   const setCurrentDocument = useSetRecoilState(currentdocument)
   const setRequestedit = useSetRecoilState(requestediton)
   const requestedit=useRecoilValue(requestediton)
-  const updateName = async (e:any)=>{    
-    const newName = e.target.value===''?'Untitled Document':`${e.target.value}`
-    let res=await axios.post('/api/renamedocument',{
-      newName, roomName : id
-    })
-    if(res.status === 200){
-      setDocumentName(res.data.newName==='Untitled Document'?'':`${res.data.newName}`)
-    }
-  }
+
   const findInPeople = (arr:any)=>{
     if(arr === undefined) return -1
     for(let i=0;i<arr.length;i++){
@@ -72,14 +65,16 @@ const page = () => {
     setValue1(currentdocumentob?.share?.generalaccess?.value)
     setValue2(currentdocumentob?.share?.generalaccess?.role)
 },[currentdocumentob])
+
 const getDocumentDetails = async ()=>{
   try {
     let res = await axios.post('/api/roomdetails',{
       roomName : id
     })
     if(res.status === 200){
-      console.log(res.data.document);
-      console.log(res.data.getpeoplewithaccess);
+      // console.log('res data', res.data);
+      // console.log(res.data.getpeoplewithaccess);
+      setDocumentName(res.data.document.documentName)
       setPwithaccess(res.data.getpeoplewithaccess)
       setCurrentDocument(res.data.document)
       let ind = findInPeople(res.data.getpeoplewithaccess)
@@ -110,6 +105,30 @@ const getDocumentDetails = async ()=>{
   const handleprint = () => {
     window.print();
   }
+
+  useEffect(() => {
+    documentNameRef.current = documentName;
+  }, [documentName]);
+
+  useEffect(() => {
+      const interval = setInterval(async () => {
+        
+        const newName = documentNameRef.current === ''?'Untitled Document':documentNameRef.current
+        try {
+          await axios.post('/api/renamedocument',{
+            newName, roomName : id
+          })
+          console.log('updating name');
+          
+        } catch (error) {
+            console.log('error in updating name');
+        }
+      }, 1500)
+      return () => {
+        clearInterval(interval)
+      }
+  }, [])
+
     useEffect(()=>{
       getDocumentDetails()
     },[session])
@@ -118,7 +137,7 @@ const getDocumentDetails = async ()=>{
     {allowedtoview ? <div className='bg-slate-800'>
       <BackDrop/>
       {(shomeon || speopleaddon || ssettingson || svieweron || requestedit) && <ShareBox/>}
-      <div className="document_nav flex flex-row justify-between items-center h-[50px] bg-black sticky top-0 z-[2]">
+      <div className="document_nav flex flex-row justify-between items-center h-[70px] bg-black sticky top-0 z-[2]">
         <div className="flex flex-row relative items-center">
         <Image
         src="/docs_img.png"
@@ -133,9 +152,9 @@ const getDocumentDetails = async ()=>{
         type="text"
         // value = {documentName===""?`Untitled document`:`${documentName}`}
         value = {documentName}
-        onChange={updateName}
+        onChange={e => setDocumentName(e.target.value)}
         placeholder='document Name'
-        className='bg-black w-auto'
+        className='bg-black w-auto border-none outline-none'
          />
         <div className='flex flex-row justify-between items-center text-[0.9rem]'>
             <p className='mr-3 hover:text-blue-600 cursor-pointer' onClick={handleprint}>Print</p>
