@@ -46,7 +46,6 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
   const setRequestedit = useSetRecoilState(requestediton)
   const requestedit=useRecoilValue(requestediton)
   const [initialRender, setInitialRender] = useState(0)
-  // const [renderEditor, setRenderEditor] = useState(false)
 
   const findInPeople = (arr:any)=>{
     if(arr === undefined) return -1
@@ -70,9 +69,7 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
 
 const checkExpiration = (date : string) : Boolean => {
   const now = new Date();
-  const isoString = now.toISOString().slice(0, 16)
-  console.log('isoString < date', isoString, date, isoString < date);
-  
+  const isoString = now.toISOString().slice(0, 16)  
   return isoString < date
 }
 
@@ -82,21 +79,15 @@ const getDocumentDetails = async ()=>{
       roomName : id
     })
     if(res.status === 200){
-      console.log('res data', res.data);
-      // console.log(res.data.getpeoplewithaccess);
       setDocumentName(res.data.document.documentName)
       setPwithaccess(res.data.getpeoplewithaccess)
       setCurrentDocument(res.data.document)
       let ind = findInPeople(res.data.getpeoplewithaccess)
-      console.log('ind', ind);
       
-      if((session && res.data.document?.ownedBy?.email === session?.user?.email) || res.data.document?.share?.generalaccess?.value === "AnyOne with link"){
-        // console.log('in higher');
-        
+      if((session && res.data.document?.ownedBy?.email === session?.user?.email) || res.data.document?.share?.generalaccess?.value === "AnyOne with link"){        
         setAllowedtoview(true)
       }
       else if(ind !== -1 && (!res.data.getpeoplewithaccess[ind].expirationOn || (res.data.getpeoplewithaccess[ind].expirationOn && checkExpiration(res.data.getpeoplewithaccess[ind].expirationDate)))){
-        // console.log('in lower');
         setAllowedtoview(true)
       }
       else{
@@ -106,13 +97,11 @@ const getDocumentDetails = async ()=>{
         setMyrole(res.data.document?.share?.generalaccess?.role)
       }
       if(ind !== -1 && res.data.document?.share?.generalaccess?.role !== 'Editor'){
-        // console.log(res.data.getpeoplewithaccess[ind].role);
         setMyrole(res.data.getpeoplewithaccess[ind].role)
       }
       if(res.data.document?.ownedBy?.email === session?.user?.email){
         setMyrole('owner')
       }
-      // console.log(res.data.document?.share?.generalaccess?.role);
     }
   } catch (error) {
     console.log('error', error);
@@ -124,15 +113,12 @@ const getDocumentDetails = async ()=>{
 
   useEffect(() => {
     if(initialRender >= 2) return ;
-    console.log('initialData', initialData);
-    // console.log(initialData.getpeoplewithaccess);
     setDocumentName(initialData.document.documentName)
     setPwithaccess(initialData.getpeoplewithaccess)
     setCurrentDocument(initialData.document)
 
     let ind = -1
     let arr = initialData.getpeoplewithaccess
-    console.log('arr', arr);
     
     if(arr !== undefined) {
       for(let i=0;i<arr.length;i++){
@@ -142,7 +128,6 @@ const getDocumentDetails = async ()=>{
         }
       }
     }
-    console.log('ind', ind);
     
     if((sessionData && initialData.document?.ownedBy?.email === sessionData?.user?.email) || initialData.document?.share?.generalaccess?.value === "AnyOne with link"){
       setAllowedtoview(true)
@@ -176,9 +161,7 @@ const getDocumentDetails = async ()=>{
         try {
           await axios.post('/api/renamedocument',{
             newName, roomName : id
-          })
-          console.log('updating name');
-          
+          })          
         } catch (error) {
             console.log('error in updating name');
         }
@@ -215,7 +198,6 @@ const getDocumentDetails = async ()=>{
           <div className='flex flex-col justify-center ml-3 font-normal'>
             <input 
             type="text"
-            // value = {documentName===""?`Untitled document`:`${documentName}`}
             value = {documentName}
             onChange={e => setDocumentName(e.target.value)}
             placeholder='document Name'
@@ -269,7 +251,6 @@ const getDocumentDetails = async ()=>{
                     setShareprevopen("home")
                   }
                   else{
-                    // setSharehomeon(true)
                     setSharevieweron(true)
                   }
                   }}>

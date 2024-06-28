@@ -22,7 +22,7 @@ const ViewerHome = () => {
   const setSvieweron = useSetRecoilState(sharevieweron)
   const setSharevieweron = useSetRecoilState(sharevieweron)
   const handleCopiedClick=()=>{
-    navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
+    navigator.clipboard.writeText(`${process.env.NEXTJS_URL}/document/${id}`);
   }
   const handlesend =async ()=>{
     try {
@@ -39,7 +39,6 @@ const ViewerHome = () => {
       }
     } catch (error) {
       console.log('error', error);
-      
     }
   }
   const handleask =async ()=>{
@@ -58,7 +57,6 @@ const ViewerHome = () => {
       }
     } catch (error) {
       console.log('error', error);
-      
     }
   }
   return (

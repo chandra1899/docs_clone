@@ -1,8 +1,6 @@
 import {transporter} from '@/config/nodemailer'
 
 const Sharefile = async (from:string, to:string, msg: string, roomName : string)=>{
-    // console.log(from, to, msg);
-    
     try {
         let info=await transporter.sendMail({
             from:'c4746665@gmail.com',

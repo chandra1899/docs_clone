@@ -1,8 +1,6 @@
 import {transporter} from '@/config/nodemailer'
 
-const Requesteditaccess = async (from:string, to:string, msg: string, roomName : string)=>{
-    // console.log(from, to, msg);
-    
+const Requesteditaccess = async (from:string, to:string, msg: string, roomName : string)=>{    
     try {
         let info=await transporter.sendMail({
             from:'c4746665@gmail.com',

@@ -46,9 +46,6 @@ const GeneralAccess = () => {
                     {Value1 === 'In this Organisation' && <p className='text-[0.8rem] font-normal ml-3'>Anyone in this group with the link can view</p>}
                     {Value1 ==='AnyOne with link' && <p className='text-[0.8rem] font-normal ml-3'>Anyone on the internet with the link can view</p>}
                 </div>
-                {/* {(myrole !== 'Viewer' && currentdocumentob?.settings.s1 !== false && Value1 !=='Restricted')? <DropDown/>:
-                <p className='text-slate-300 text-[0.9rem] ml-3'>{Value2}</p>
-                } */}
                 {(Value1 !=='Restricted' && (myrole === 'owner' || (myrole === 'Editor' && currentdocumentob?.settings.s1 === true))) ?  <DropDown/> :Value1 !=='Restricted'? 
                 <p className='text-slate-300 text-[0.9rem] ml-3'>{Value2}</p>:''}
       </div>

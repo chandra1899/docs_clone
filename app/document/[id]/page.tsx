@@ -1,7 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { DocumentClientSide, NotFound } from "@/components"
 import { getServerSession } from "next-auth"
-import { redirect } from "next/navigation"
 import Link from "next/link"
 
 interface Params {
@@ -10,7 +9,6 @@ interface Params {
 
 const page = async ({ params } : any) => {
   const sessionData = await getServerSession(authOptions)
-  console.log('sessionData', sessionData);
 
   if (!sessionData) {
     return <div className="flex flex-row justify-center items-center mt-4">
@@ -42,9 +40,7 @@ const page = async ({ params } : any) => {
     initialData = await res.json()
     if(!initialData.document){
       return <NotFound/>
-    }
-    console.log('in server side');
-    
+    }    
   } catch (error) {
     console.log('error in fetching initial props at server', error);
     return 

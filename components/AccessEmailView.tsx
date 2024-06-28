@@ -29,14 +29,11 @@ const AccessEmailView = ({peopleob}:any)=>{
         let res = await axios.post('/api/sharepeoplechange',{
             role : value, _id : peopleob._id, expirationOn : expiration, expirationDate : e.target.value
         })
-        if(res.status === 200){
-            console.log('date changed to', e.target.value);
-            
+        if(res.status === 200){            
             setExpirationDate(res.data.expirationDate)
         }
     }
     const handlechange =async  (role : String)=>{
-        // const {role, expirationOn, expirationDate, _id}=await req.json()
         let res = await axios.post('/api/sharepeoplechange',{
             role, _id : peopleob._id, expirationOn : expiration, expirationDate
         })
@@ -57,18 +54,14 @@ const AccessEmailView = ({peopleob}:any)=>{
             role : value, _id : peopleob._id, expirationOn : !expiration, expirationDate : expireDate
         })
         if(res.status === 200){
-            if(!expiration) {
-                console.log('date changes to', expireDate);
-                
+            if(!expiration) {                
                 setExpirationDate(expireDate)
             }
             setExpiration((pre:any)=>!pre)
             setDropon(false)
         }
     }
-    const handleremoveaccess =async (e : any)=>{
-        // console.log(e.target.parentNode.parentNode.parentNode.parentNode);
-        
+    const handleremoveaccess =async (e : any)=>{        
         let res = await axios.post('/api/removeaccess',{
             _id : peopleob._id, roomName
         })
@@ -76,12 +69,6 @@ const AccessEmailView = ({peopleob}:any)=>{
             e.target.parentNode.parentNode.parentNode.parentNode.classList.add('hidden')
         }
     }
-    useEffect(() => {
-        console.log('expirationDate', expirationDate);
-        const now = new Date();
-        console.log('date now', now.toISOString().slice(0, 16))
-        
-    }, [])
     return (
         <div className='flex flex-col '>
             <div className='flex flex-row justify-between items-center'>

@@ -18,7 +18,7 @@ const Editor = ({socket, currDocMode}:any) => {
     const saveDocument = async () => {
       if(myRole === 'Viewer') return ;
           try {
-            let res = await fetch('/api/savedocument',{
+            await fetch('/api/savedocument',{
               method:'POST',
               headers:{
                 'Access-Control-Allow-Origin': '*',
@@ -29,10 +29,7 @@ const Editor = ({socket, currDocMode}:any) => {
               body:JSON.stringify({
                 roomName : id,content : editor.current?.getEditor().getContents()
               })
-            })
-            if(res.status === 200)
-              console.log('saved');
-            
+            })            
           } catch (error) {
             console.log("error", error);
           }
@@ -56,12 +53,8 @@ const Editor = ({socket, currDocMode}:any) => {
                   roomName : id
                 })
               })
-              if(res.status === 200){
-                console.log('document loaded');
-                
-                let data = await res.json();
-                console.log('document dta', data);
-                
+              if(res.status === 200){                
+                let data = await res.json();                
                 const initialContent = data.contents
                 editor.current?.getEditor().setContents(initialContent.ops)
                 setConnectionEstablished(true)
@@ -85,14 +78,13 @@ const Editor = ({socket, currDocMode}:any) => {
       useEffect(() => {
         editor.current?.getEditor().disable()
         if(socket == null || editor.current == null) return ;
-        console.log('in editor');
         setTriggerInitialisation(1)
       }, [socket, editor.current])
 
       useEffect(() => {
         if(socket == null || editor.current == null || connectionEstablished == false) return ;
+        if(myRole === 'Viewer') return ;
         const interval = setInterval(async () => {
-          console.log("saveDocument");
             await saveDocument()
         }, 1500)
         return () => {

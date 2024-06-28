@@ -5,9 +5,7 @@ import { useRouter } from 'next/navigation'
 import React from 'react'
 import DocOptions from './DocOptions'
 
-const Doc = ({document}:any) => {
-  console.log('document', document);
-  
+const Doc = ({document}:any) => {  
   const {status,data:session} =useSession()
   const router = useRouter();
   return (

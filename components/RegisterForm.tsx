@@ -1,5 +1,4 @@
 "use client"
-
 import { useState } from "react"
 import { FormEventHandler, KeyboardEventHandler } from 'react';
 import Link  from 'next/link'
@@ -26,14 +25,12 @@ export default function RegisterForm(){
       const handlesubmit:FormEventHandler<HTMLFormElement>=async (e)=>{
         e.preventDefault()
         setIsLoading(true)
-        // console.log('hi');
         try {
             let res=await axios.post('/api/register',form)
             if(res.status===200){
               let form =e.target as HTMLFormElement
                 form.reset()
                 router.replace('/login')
-                // window.alert('registered')
             }
             
         } catch (error) {

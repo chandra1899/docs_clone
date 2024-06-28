@@ -5,7 +5,6 @@ import Document from '@/models/document'
 export async function POST(req:Request){
     try {
         const {newName, roomName}=await req.json()
-        // console.log("newName", newName);
         
         await connectMongoDB()
         const document = await Document.findOneAndUpdate({ roomName }, {documentName : newName}) 

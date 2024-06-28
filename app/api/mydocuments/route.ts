@@ -9,13 +9,11 @@ export async function POST(req:Request){
         
         await connectMongoDB()
         let user = await User.findOne({email})
-        console.log(user._id);
         
         const documents = await Document.find({
             ownedBy : user._id
             //shared with you
         }) 
-        console.log(documents);
         
         return NextResponse.json({documents},{status:200})
     } catch (error) {

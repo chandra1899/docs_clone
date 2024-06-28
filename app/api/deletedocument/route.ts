@@ -6,7 +6,6 @@ import PeopleWithAccess from '@/models/peoplewithaccess';
 export async function POST(req:Request){
     try {
         const { roomName } = await req.json();
-        // console.log("in get content", roomName);
         await connectMongoDB()
         await Document.findOneAndDelete({ roomName })
         await PeopleWithAccess.deleteMany({ roomName })

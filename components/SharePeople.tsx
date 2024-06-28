@@ -10,7 +10,7 @@ import { yourrole } from '@/store/atoms/yourrole'
 import axios from 'axios'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
 const DropDown = ({expiration, setExpiration, value, setValue}:any)=>{
@@ -57,7 +57,7 @@ const SharePeople = () => {
     let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
     const [expirationDate, setExpirationDate] = useState(tomorrowISOString)
     const handleCopiedClick=()=>{
-        navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
+        navigator.clipboard.writeText(`${process.env.NEXTJS_URL}/document/${id}`);
       }
       const handleDateChange = (e:any)=>{
         const currentDate = new Date().toISOString().slice(0, 16);
@@ -80,7 +80,6 @@ const SharePeople = () => {
       if(res.status === 200 && res?.data?.people != undefined){
         let insert = res?.data?.people
         setCurrentdocument((prev)=>{
-          // console.log("prev", prev);
           const updatedPrev = {
             ...prev,
             share: {
@@ -88,8 +87,6 @@ const SharePeople = () => {
                 peoplewithaccess: [...prev.share.peoplewithaccess, insert]
             }
         }; 
-        // console.log("updatedPrev", updatedPrev);
-        
           return updatedPrev
         })
         setShareemail("")

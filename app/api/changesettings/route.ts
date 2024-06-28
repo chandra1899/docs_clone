@@ -1,7 +1,5 @@
 import {NextResponse } from 'next/server'
-import { connectMongoDB } from '@/config/mongoose'
 import Document from '@/models/document'
-import User from '@/models/user'
 
 export async function POST(req:Request){
     try {

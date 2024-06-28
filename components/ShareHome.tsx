@@ -5,16 +5,11 @@ import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
 import { shareprevopen } from '@/store/atoms/shareprevopen'
 import { sharesettingson } from '@/store/atoms/sharesettingson'
-import axios from 'axios'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
+import React, { useState } from 'react'
+import {  useRecoilValue, useSetRecoilState } from 'recoil'
 import { AccessEmailView, GeneralAccess } from '.'
-import { resValue2 } from '@/store/atoms/resValue2'
-import { resValue1 } from '@/store/atoms/resValue1'
-import { dropOn1 } from '@/store/atoms/dropOn1'
-import { dropOn2 } from '@/store/atoms/dropOn2'
 import { yourrole } from '@/store/atoms/yourrole'
 import { sharevieweron } from '@/store/atoms/sharevieweron'
 import { peoplewithaccess } from '@/store/atoms/peoplewithaccess'
@@ -35,7 +30,7 @@ const ShareHome = () => {
     const myrole = useRecoilValue(yourrole)
     const [copied, setCopied] = useState(false)
     const handleCopiedClick=()=>{
-        navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
+        navigator.clipboard.writeText(`${process.env.NEXTJS_URL}/document/${id}`);
         setCopied(true)
         setTimeout(() => {
           setCopied(false)
@@ -79,7 +74,6 @@ const ShareHome = () => {
                 width={35}
                 height={35}
                 alt="arrow_right"
-                // className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
             />
         </button>
       </div>
@@ -118,7 +112,6 @@ const ShareHome = () => {
                     width={28}
                     height={28}
                     alt="copy link"
-                    // className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
                 />}
             {!copied && <p className='font-medium ml-2 text-[0.9rem]'>Copy link</p>}
             {copied && <Image

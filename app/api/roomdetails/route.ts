@@ -6,13 +6,11 @@ import PeopleWithAccess from '@/models/peoplewithaccess'
 export async function POST(req:Request){
     try {
         const { roomName } = await req.json();
-        console.log("roomame", roomName);
         await connectMongoDB()
         const document = await Document.findOne({ roomName })
         .populate('ownedBy', '-password').select('-content');
         let getpeoplewithaccess = await PeopleWithAccess.find({roomName})
         .populate('user', '-password')
-        // console.log('in room details', document);
         
         return NextResponse.json({document, getpeoplewithaccess},{status:200})
     } catch (error) {

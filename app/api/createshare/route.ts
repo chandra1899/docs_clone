@@ -8,7 +8,6 @@ import Sharefile from '@/mailers/sharedfile'
 export async function POST(req:Request){
     try {
         const {email,role,expirationOn,expirationDate, roomName, notify, msg}=await req.json()
-        console.log(email,notify, msg);
         
         await connectMongoDB()
         let user = await User.findOne({email})
@@ -21,7 +20,6 @@ export async function POST(req:Request){
             expirationDate
         })
         let document = await Document.findOne({roomName}).populate('ownedBy')
-        console.log(document.ownedBy.email);
         
         if(notify) {
             Sharefile(document.ownedBy.email, email, msg, roomName)
@@ -32,9 +30,7 @@ export async function POST(req:Request){
             path : 'user',
             select : '-password'
         })
-        // console.log(people);
-        
-        
+
         return NextResponse.json({people},{status:200})
     } catch (error) {
         console.log(error);

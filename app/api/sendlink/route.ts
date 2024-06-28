@@ -1,7 +1,4 @@
 import {NextResponse } from 'next/server'
-import { connectMongoDB } from '@/config/mongoose'
-import Document from '@/models/document'
-import User from '@/models/user'
 import SendLink from '@/mailers/sendlink'
 
 export async function POST(req:Request){

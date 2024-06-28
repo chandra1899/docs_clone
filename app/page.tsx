@@ -4,9 +4,7 @@ import { authOptions } from "./api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-
   const sessionData = await getServerSession(authOptions)
-  console.log('sessionData', sessionData);
 
   if (!sessionData) {
     redirect('/api/auth/signin');
@@ -29,9 +27,7 @@ export default async function Home() {
       console.log('serverside error');
       return ;      
     }
-    initialData = await res.json()
-    console.log('in server side');
-    
+    initialData = await res.json()    
   } catch (error) {
     console.log('error in fetching initial props at server', error);
     return 

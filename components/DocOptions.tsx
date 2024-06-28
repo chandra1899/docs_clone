@@ -3,18 +3,14 @@ import React, { useState } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
 
-const DocOptions = ({roomName} : any) => {
-    console.log('roomname', roomName);
-    
+const DocOptions = ({roomName} : any) => {    
     const [modeDropOn, setModeDropOn] = useState(false)
-
     const handleDeleteDoc =async (e : any) => {
         try {
             let res = await axios.post('/api/deletedocument',{
                 roomName
               })
             if(res.status === 200){
-                console.log('deleted doc');
                 e.target.parentElement.parentElement.parentElement.parentElement.classList.add('hidden')
             }
         } catch (error) {

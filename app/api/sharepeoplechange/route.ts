@@ -1,17 +1,10 @@
 import {NextResponse } from 'next/server'
 import { connectMongoDB } from '@/config/mongoose'
-import Document from '@/models/document'
 import PeopleWithAccess from '@/models/peoplewithaccess'
 
 export async function POST(req:Request){
     try {
         const {role, expirationOn, expirationDate, _id}=await req.json()
-        console.log('role', role);
-        console.log('expirationOn', expirationOn);
-        console.log('expirationDate', expirationDate);
-        console.log('_id', _id);
-        
-        
         await connectMongoDB()
         let peoplewithaccess = await PeopleWithAccess.findById(_id)
         peoplewithaccess.role = role
