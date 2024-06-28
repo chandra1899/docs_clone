@@ -16,6 +16,7 @@ import AccessEmailView from './AccessEmailView'
 import GeneralAccess from './GeneralAccess'
 import RequestEditAccess from './RequestEditAccess'
 import RequestDocumentAccess from './RequestDocumentAccess'
+import DocumentClientSide from './documentClientSide'
 
 export {
     LoginForm,
@@ -35,5 +36,6 @@ export {
     AccessEmailView,
     GeneralAccess,
     RequestEditAccess,
-    RequestDocumentAccess
+    RequestDocumentAccess,
+    DocumentClientSide
 }

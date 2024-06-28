@@ -1,233 +1,50 @@
-"use client"
-import { BackDrop, Editor, RequestDocumentAccess, ShareBox } from '@/components';
-import { allowedToView } from '@/store/atoms/allowedToView';
-import { currentdocument } from '@/store/atoms/currentdocument';
-import { peoplewithaccess } from '@/store/atoms/peoplewithaccess';
-import { requestediton } from '@/store/atoms/requestediton';
-import { resValue1 } from '@/store/atoms/resValue1';
-import { resValue2 } from '@/store/atoms/resValue2';
-import { sharehomeon } from '@/store/atoms/sharehomeon';
-import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon';
-import { shareprevopen } from '@/store/atoms/shareprevopen';
-import { sharesettingson } from '@/store/atoms/sharesettingson';
-import { sharevieweron } from '@/store/atoms/sharevieweron';
-import { yourrole } from '@/store/atoms/yourrole';
-import axios from 'axios';
-import { useSession } from 'next-auth/react';
-import Image from 'next/image'
-import { useParams, useRouter } from 'next/navigation';
-import { useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { io } from "socket.io-client";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { DocumentClientSide } from "@/components"
+import axios from "axios";
+import { getServerSession } from "next-auth"
+import { redirect } from "next/navigation"
 
-const page = () => {
-  const [modeDropOn, setModeDropOn] = useState(false)
-  const [currDocMode, setCurrDocMode] = useState('Edit')
-  const setPwithaccess = useSetRecoilState(peoplewithaccess)
-  const setValue1 = useSetRecoilState(resValue1)
-  const setValue2 = useSetRecoilState(resValue2)
-  const shomeon=useRecoilValue(sharehomeon)
-  const setSharevieweron=useSetRecoilState(sharevieweron)
-  const svieweron=useRecoilValue(sharevieweron)
-  const speopleaddon=useRecoilValue(sharepeopleaddon)
-  const ssettingson=useRecoilValue(sharesettingson)
-  const setSharehomeon=useSetRecoilState(sharehomeon)
-  const setShareprevopen=useSetRecoilState(shareprevopen)
-  const currentdocumentob=useRecoilValue(currentdocument)
-  const [allowedtoview, setAllowedtoview] = useRecoilState(allowedToView)
-  const [myrole, setMyrole] = useRecoilState(yourrole)
-  const [socket, setSocket] = useState();
-  const {status,data:session} =useSession()
-  const router = useRouter();
-  const {id} = useParams()
-  const [documentName, setDocumentName] = useState('');
-  const documentNameRef = useRef(documentName);
-  const setCurrentDocument = useSetRecoilState(currentdocument)
-  const setRequestedit = useSetRecoilState(requestediton)
-  const requestedit=useRecoilValue(requestediton)
+interface Params {
+  id: string;
+}
 
-  const findInPeople = (arr:any)=>{
-    if(arr === undefined) return -1
-    for(let i=0;i<arr.length;i++){
-      if(arr[i].user.email === session?.user?.email) return i
-    }
-    return -1
+const page = async ({ params } : any) => {
+  const sessionData = await getServerSession(authOptions)
+  console.log('sessionData', sessionData);
+
+  if (!sessionData) {
+    redirect('/api/auth/signin');
   }
-  
-  useEffect(()=>{
-    const s = io("http://localhost:3001/");
-    setSocket(s)
-    return ()=>{
-      s.disconnect()
-    }
-  }, [])
-  useEffect(()=>{
-    setValue1(currentdocumentob?.share?.generalaccess?.value)
-    setValue2(currentdocumentob?.share?.generalaccess?.role)
-},[currentdocumentob])
-
-const getDocumentDetails = async ()=>{
+  const roomName = params.id
+  let initialData ;
   try {
-    let res = await axios.post('/api/roomdetails',{
-      roomName : id
+    let res = await fetch(`${process.env.NEXTJS_URL}/api/roomdetails`,{
+      method:'POST',
+      headers:{
+        'Access-Control-Allow-Origin': '*',
+        Accept:"application/json",
+        "Content-Type":"application/json"
+      },
+      credentials:'include',
+      body:JSON.stringify({
+        roomName 
+      })
     })
-    if(res.status === 200){
-      // console.log('res data', res.data);
-      // console.log(res.data.getpeoplewithaccess);
-      setDocumentName(res.data.document.documentName)
-      setPwithaccess(res.data.getpeoplewithaccess)
-      setCurrentDocument(res.data.document)
-      let ind = findInPeople(res.data.getpeoplewithaccess)
-      console.log('ind', ind);
-      
-      if((session && res.data.document?.ownedBy?.email === session?.user?.email) || res.data.document?.share?.generalaccess?.value === "AnyOne with link" || ind !== -1){
-        setAllowedtoview(true)
-      }
-      else{
-        setAllowedtoview(false)
-      }
-      if(res.data.document?.share?.generalaccess?.value !== "Restricted"){
-        setMyrole(res.data.document?.share?.generalaccess?.role)
-      }
-      if(ind !== -1 && res.data.document?.share?.generalaccess?.role !== 'Editor'){
-        // console.log(res.data.getpeoplewithaccess[ind].role);
-        setMyrole(res.data.getpeoplewithaccess[ind].role)
-      }
-      if(res.data.document?.ownedBy?.email === session?.user?.email){
-        setMyrole('owner')
-      }
-      // console.log(res.data.document?.share?.generalaccess?.role);
+    if(res.status !== 200) {
+      console.log('serverside error');
+      return ;      
     }
+    initialData = await res.json()
+    console.log('in server side');
+    
   } catch (error) {
-    console.log('error', error);
-  } 
-  }
-  const handleprint = () => {
-    window.print();
-  }
-
-  useEffect(() => {
-    documentNameRef.current = documentName;
-  }, [documentName]);
-
-  useEffect(() => {
-      const interval = setInterval(async () => {
-        
-        const newName = documentNameRef.current === ''?'Untitled Document':documentNameRef.current
-        try {
-          await axios.post('/api/renamedocument',{
-            newName, roomName : id
-          })
-          console.log('updating name');
-          
-        } catch (error) {
-            console.log('error in updating name');
-        }
-      }, 1500)
-      return () => {
-        clearInterval(interval)
-      }
-  }, [])
-
-    useEffect(()=>{
-      getDocumentDetails()
-    },[session])
+    console.log('error in fetching initial props at server', error);
+    return 
+  }  
+  
   return (
-    <>
-    {allowedtoview ? <div className='bg-slate-800'>
-      <BackDrop/>
-      {(shomeon || speopleaddon || ssettingson || svieweron || requestedit) && <ShareBox/>}
-      <div className="document_nav flex flex-row justify-between items-center h-[70px] bg-black sticky top-0 z-[2]">
-        <div className="flex flex-row relative items-center">
-        <Image
-        src="/docs_img.png"
-        width={48}
-        height={48}
-        alt="docs_img"
-        className="ml-3 cursor-pointer"
-        onClick={()=>{router.push(`/`);}}
-      />
-      <div className='flex flex-col justify-center ml-3 font-normal'>
-        <input 
-        type="text"
-        // value = {documentName===""?`Untitled document`:`${documentName}`}
-        value = {documentName}
-        onChange={e => setDocumentName(e.target.value)}
-        placeholder='document Name'
-        className='bg-black w-auto border-none outline-none'
-         />
-        <div className='flex flex-row justify-between items-center text-[0.9rem]'>
-            <p className='mr-3 hover:text-blue-600 cursor-pointer' onClick={handleprint}>Print</p>
-            <div className='mr-3 relative'>
-            <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:text-blue-600 p-2 text-[0.9rem]' onClick={()=>{if(myrole === 'Viewer') return ;setModeDropOn((pre:any)=>!pre)}}>
-                <p className={`${myrole === 'Viewer'?'text-slate-400 cursor-default':''}`} >mode</p>
-            </div>
-            {modeDropOn && <div className='absolute flex flex-col justify-center items-center p-2 bg-black mr-4 rounded-lg text-[0.8rem] w-[100px]'>
-            <div className='flex flex-row justify-center items-center w-[100%] '>
-                    <div className='flex justify-start items-center h-[30px] w-[30px]'>
-                        {currDocMode === "View" && <Image
-                        src="/tick.png"
-                        width={20}
-                        height={20}
-                        alt="tick"
-                        className="cursor-pointer"
-                        />}
-                    </div>
-                    <p className='my-1 cursor-pointer hover:bg-slate-700 p-1 px-2 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('View');setModeDropOn(false)}} >View</p>
-                </div>
-            <div className='flex flex-row justify-center items-center w-[100%] '>
-                    <div className='flex justify-start items-center h-[30px] w-[30px]'>
-                        {currDocMode === "Edit" && <Image
-                        src="/tick.png"
-                        width={20}
-                        height={20}
-                        alt="tick"
-                        className="cursor-pointer"
-                        />}
-                    </div>
-                    <p className='my-1 cursor-pointer hover:bg-slate-700 p-1 px-2 flex justify-center items-center rounded-l-full rounded-r-full' onClick={()=>{setCurrDocMode('Edit');setModeDropOn(false)}}>Edit</p>
-                </div>
-            </div>}
-        </div>
-            <p className='mr-3 hover:text-blue-600 cursor-pointer'>Extensions</p>
-            <p className='mr-3 hover:text-blue-600 cursor-pointer'>help</p>
-        </div>
-      </div>
-        </div>
-        <div className='flex flex-row justify-center items-center'>
-            {myrole === 'Viewer' && <p className='h-[40px] text-[0.85rem] text-slate-200 border-2 border-blue-600 hover:bg-slate-800 p-2 rounded-r-full rounded-l-full cursor-pointer mx-3' onClick={()=>setRequestedit(true)} >Request Edit access</p>}
-            <div className='flex flex-row justify-center items-center bg-[#2b88eb] h-[40px] w-[100px] rounded-r-full rounded-l-full cursor-pointer hover:bg-[#165190]' onClick={()=>{
-              setSharehomeon(false)
-              setSharevieweron(false)
-              if(myrole === 'owner' || myrole === 'Editor'){
-                setSharehomeon(true)
-                setShareprevopen("home")
-              }
-              else{
-                // setSharehomeon(true)
-                setSharevieweron(true)
-              }
-              }}>
-            <Image
-              src="/lock.png"
-              width={25}
-              height={25}
-              alt="lock"
-              className="mr-1"
-            />
-                <p className='mt-1'>Share</p>
-            </div>
-        <div className="flex flex-row justify-center items-center rounded-full h-[80%] w-[60px] bg-[#6029e1] mx-6 text-[1.5rem] font-mono">
-              {session?.user?.name[0]}
-    </div>
-        </div>
-      </div>
-        <Editor socket = {socket} currDocMode = {currDocMode} />
-    </div> :
-    <RequestDocumentAccess/>
-    }
-    </>
-  )
+      <DocumentClientSide initialData = {initialData} sessionData = {sessionData} />
+    )
 }
 
 export default page

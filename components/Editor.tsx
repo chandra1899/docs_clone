@@ -3,18 +3,17 @@ import { modules_toolBar } from '@/utils/toolbarOptions';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import 'quill/dist/quill.snow.css';
-import { useSession } from 'next-auth/react';
 import { useRecoilValue } from 'recoil';
 import { yourrole } from '@/store/atoms/yourrole';
 import ReactQuill from 'react-quill';
 
 const Editor = ({socket, currDocMode}:any) => {
-    const {status,data:session} = useSession()
     const myRole = useRecoilValue(yourrole)
     const {id} = useParams()
     const editor = useRef<ReactQuill>(null)
     const [connectionEstablished, setConnectionEstablished] = useState(false)
     const [openToolBar, setOpenToolBar] = useState(false)
+  const [triggerInitialisation, setTriggerInitialisation] = useState<null | number>(null);
 
     const saveDocument = async () => {
       if(myRole === 'Viewer') return ;
@@ -38,15 +37,14 @@ const Editor = ({socket, currDocMode}:any) => {
             console.log("error", error);
           }
       }
-      useEffect(() => {        
-        editor.current?.getEditor().disable()
-        if(socket == null || editor.current == null) return ;
+
+      const initialisation =async () => {
         setConnectionEstablished(false)
         editor.current?.getEditor().setText("Establishing connection.........")
         socket.on("connection-established", async () => {
           editor.current?.getEditor().setText("getting initial state of document.........")
             try {
-              let res = await fetch('/api/roomdetails',{
+              let res = await fetch('/api/getdoccontent',{
                 method:'POST',
                 headers:{
                   'Access-Control-Allow-Origin': '*',
@@ -64,7 +62,7 @@ const Editor = ({socket, currDocMode}:any) => {
                 let data = await res.json();
                 console.log('document dta', data);
                 
-                const initialContent = data.document.content
+                const initialContent = data.contents
                 editor.current?.getEditor().setContents(initialContent.ops)
                 setConnectionEstablished(true)
                 if(myRole !== 'Viewer'){
@@ -78,13 +76,23 @@ const Editor = ({socket, currDocMode}:any) => {
             }
         })
         socket.emit("establish-conection", id)
+      }
+
+      useEffect(() => {
+        triggerInitialisation && initialisation()
+      }, [triggerInitialisation])
+
+      useEffect(() => {
+        editor.current?.getEditor().disable()
+        if(socket == null || editor.current == null) return ;
+        console.log('in editor');
+        setTriggerInitialisation(1)
       }, [socket, editor.current])
 
       useEffect(() => {
         if(socket == null || editor.current == null || connectionEstablished == false) return ;
         const interval = setInterval(async () => {
           console.log("saveDocument");
-          
             await saveDocument()
         }, 1500)
         return () => {
