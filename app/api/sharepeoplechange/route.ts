@@ -19,7 +19,7 @@ export async function POST(req:Request){
         peoplewithaccess.expirationDate = expirationDate
         await peoplewithaccess.save()
         
-        return NextResponse.json({},{status:200})
+        return NextResponse.json({role, expirationOn, expirationDate, _id},{status:200})
     } catch (error) {
         console.log(error);
         return NextResponse.json({message:'server error'},{status:500})

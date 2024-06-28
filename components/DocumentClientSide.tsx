@@ -68,6 +68,14 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
     setValue2(currentdocumentob?.share?.generalaccess?.role)
 },[currentdocumentob])
 
+const checkExpiration = (date : string) : Boolean => {
+  const now = new Date();
+  const isoString = now.toISOString().slice(0, 16)
+  console.log('isoString < date', isoString, date, isoString < date);
+  
+  return isoString < date
+}
+
 const getDocumentDetails = async ()=>{
   try {
     let res = await axios.post('/api/roomdetails',{
@@ -82,7 +90,13 @@ const getDocumentDetails = async ()=>{
       let ind = findInPeople(res.data.getpeoplewithaccess)
       console.log('ind', ind);
       
-      if((session && res.data.document?.ownedBy?.email === session?.user?.email) || res.data.document?.share?.generalaccess?.value === "AnyOne with link" || ind !== -1){
+      if((session && res.data.document?.ownedBy?.email === session?.user?.email) || res.data.document?.share?.generalaccess?.value === "AnyOne with link"){
+        // console.log('in higher');
+        
+        setAllowedtoview(true)
+      }
+      else if(ind !== -1 && (!res.data.getpeoplewithaccess[ind].expirationOn || (res.data.getpeoplewithaccess[ind].expirationOn && checkExpiration(res.data.getpeoplewithaccess[ind].expirationDate)))){
+        // console.log('in lower');
         setAllowedtoview(true)
       }
       else{
@@ -130,7 +144,10 @@ const getDocumentDetails = async ()=>{
     }
     console.log('ind', ind);
     
-    if((sessionData && initialData.document?.ownedBy?.email === sessionData?.user?.email) || initialData.document?.share?.generalaccess?.value === "AnyOne with link" || ind !== -1){
+    if((sessionData && initialData.document?.ownedBy?.email === sessionData?.user?.email) || initialData.document?.share?.generalaccess?.value === "AnyOne with link"){
+      setAllowedtoview(true)
+    }
+    else if(ind !== -1 && (!initialData.getpeoplewithaccess[ind].expirationOn || (initialData.getpeoplewithaccess[ind].expirationOn && checkExpiration(initialData.getpeoplewithaccess[ind].expirationDate)))){
       setAllowedtoview(true)
     }
     else{
@@ -213,7 +230,7 @@ const getDocumentDetails = async ()=>{
              />
             <div className='flex flex-row justify-between items-center text-[0.9rem]'>
                 <p className='mr-3 hover:text-blue-600 cursor-pointer' onClick={handleprint}>Print</p>
-                <div className='mr-3 relative'>
+                <div className='mr-3 relative' tabIndex={0} onBlur={() => setModeDropOn(false)} >
                 <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:text-blue-600 p-2 text-[0.9rem]' onClick={()=>{if(myrole === 'Viewer') return ;setModeDropOn((pre:any)=>!pre)}}>
                     <p className={`${myrole === 'Viewer'?'text-slate-400 cursor-default':''}`} >mode</p>
                 </div>

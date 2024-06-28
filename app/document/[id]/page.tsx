@@ -1,6 +1,5 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { DocumentClientSide } from "@/components"
-import axios from "axios";
 import { getServerSession } from "next-auth"
 import { redirect } from "next/navigation"
 

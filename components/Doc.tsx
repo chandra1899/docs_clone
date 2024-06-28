@@ -3,13 +3,15 @@ import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
+import DocOptions from './DocOptions'
 
 const Doc = ({document}:any) => {
   const {status,data:session} =useSession()
   const router = useRouter();
   return (
-    <div className='flex flex-row items-center justify-between w-[800px] text-[0.8rem] font-normal my-1 h-[40px] hover:bg-slate-900 cursor-pointer rounded-l-full rounded-r-full' onClick={()=>{router.push(`/document/${document?.roomName}`)}} >
-      <div className='flex flex-row items-center justify-center w-[300px]'>
+    <div className='flex flex-row items-center justify-between w-[800px] text-[0.8rem] font-normal my-1 h-[40px] hover:bg-slate-900 rounded-l-full rounded-r-full' >
+      <div className='flex flex-row items-center justify-center w-[300px] cursor-pointer' 
+      onClick={()=>{router.push(`/document/${document?.roomName}`)}} >
       <Image
         src="/docs_img.png"
         width={28}
@@ -21,13 +23,7 @@ const Doc = ({document}:any) => {
       </div>
       <p>{(document?.ownedBy===session?.user?.email)?'me':`${session?.user?.email}`}</p>
       <p>84-84-4848</p>
-      <Image
-        src="/dot_menu.png"
-        width={28}
-        height={28}
-        alt="dot_menu"
-        className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
-      />
+      <DocOptions roomName = {document?.roomName} />
     </div>
   )
 }

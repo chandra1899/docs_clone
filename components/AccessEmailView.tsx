@@ -4,7 +4,7 @@ import { yourrole } from '@/store/atoms/yourrole'
 import axios from 'axios'
 import Image from 'next/image'
 import { useParams } from 'next/navigation'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
 
 const AccessEmailView = ({peopleob}:any)=>{
@@ -16,9 +16,13 @@ const AccessEmailView = ({peopleob}:any)=>{
     const myrole = useRecoilValue(yourrole)
     const currentdocumentob=useRecoilValue(currentdocument)
     
-    let tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
+    function getTomorrowDate() {
+        const now = new Date();
+        const tomorrow = new Date(now);
+        tomorrow.setHours(now.getHours() + 24);
+        const formattedDateTime = tomorrow.toISOString().slice(0, 16);
+        return formattedDateTime;
+    }
     const handleChangeDate =async (e:any)=>{
         const currentDate = new Date().toISOString().slice(0, 16);
         if(e.target.value <= currentDate) return 
@@ -26,7 +30,9 @@ const AccessEmailView = ({peopleob}:any)=>{
             role : value, _id : peopleob._id, expirationOn : expiration, expirationDate : e.target.value
         })
         if(res.status === 200){
-            setExpirationDate(e.target.value)
+            console.log('date changed to', e.target.value);
+            
+            setExpirationDate(res.data.expirationDate)
         }
     }
     const handlechange =async  (role : String)=>{
@@ -40,15 +46,27 @@ const AccessEmailView = ({peopleob}:any)=>{
         }
     }
     const handleexpirationOn =async ()=>{
+        let expireDate ;
+        if(!expiration) {
+            expireDate = getTomorrowDate()
+        }
+        else {
+            expireDate = expirationDate
+        }
         let res = await axios.post('/api/sharepeoplechange',{
-            role : value, _id : peopleob._id, expirationOn : !expiration, expirationDate
+            role : value, _id : peopleob._id, expirationOn : !expiration, expirationDate : expireDate
         })
         if(res.status === 200){
+            if(!expiration) {
+                console.log('date changes to', expireDate);
+                
+                setExpirationDate(expireDate)
+            }
             setExpiration((pre:any)=>!pre)
             setDropon(false)
         }
     }
-    const handleremoveaccess =async (e)=>{
+    const handleremoveaccess =async (e : any)=>{
         // console.log(e.target.parentNode.parentNode.parentNode.parentNode);
         
         let res = await axios.post('/api/removeaccess',{
@@ -58,6 +76,12 @@ const AccessEmailView = ({peopleob}:any)=>{
             e.target.parentNode.parentNode.parentNode.parentNode.classList.add('hidden')
         }
     }
+    useEffect(() => {
+        console.log('expirationDate', expirationDate);
+        const now = new Date();
+        console.log('date now', now.toISOString().slice(0, 16))
+        
+    }, [])
     return (
         <div className='flex flex-col '>
             <div className='flex flex-row justify-between items-center'>
@@ -94,6 +118,7 @@ const AccessEmailView = ({peopleob}:any)=>{
                 {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.7rem] ml-3'>{expirationDate}</p> :
                     <input 
                     value={expirationDate}
+                    // value='2024-06-30T13:15'
                     onChange={handleChangeDate}
                     type="datetime-local" 
                     className='bg-[#555] border-none px-2 rounded-lg text-[0.8rem]'

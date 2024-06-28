@@ -20,7 +20,7 @@ const peopleWithAccessSchema = new Schema({
         default: true
     },
     expirationDate: {
-        type: Date 
+        type: String 
     }
 }, { timestamps: true });
 
