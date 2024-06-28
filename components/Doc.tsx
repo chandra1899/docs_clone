@@ -6,6 +6,8 @@ import React from 'react'
 import DocOptions from './DocOptions'
 
 const Doc = ({document}:any) => {
+  console.log('document', document);
+  
   const {status,data:session} =useSession()
   const router = useRouter();
   return (
@@ -22,7 +24,7 @@ const Doc = ({document}:any) => {
       <p>{document?.documentName}</p>
       </div>
       <p>{(document?.ownedBy===session?.user?.email)?'me':`${session?.user?.email}`}</p>
-      <p>84-84-4848</p>
+      <p>{document?.updatedAt}</p>
       <DocOptions roomName = {document?.roomName} />
     </div>
   )

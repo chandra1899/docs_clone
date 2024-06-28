@@ -19,6 +19,7 @@ import RequestDocumentAccess from './RequestDocumentAccess'
 import DocumentClientSide from './DocumentClientSide'
 import HomeClientSide from './HomeClientSide'
 import DocOptions from './DocOptions'
+import NotFound from './NotFound'
 
 export {
     LoginForm,
@@ -41,5 +42,6 @@ export {
     RequestDocumentAccess,
     DocumentClientSide,
     HomeClientSide,
-    DocOptions
+    DocOptions,
+    NotFound
 }
