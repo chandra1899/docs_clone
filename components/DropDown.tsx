@@ -27,7 +27,7 @@ const DropDown = ()=>{
         }
     }
     return (
-        <div className='mx-4 relative'>
+        <div className='mx-4 relative' tabIndex={0} onBlur={() => setDrop2(false)}>
             <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDrop2((pre:any)=>!pre)}>
                 <p >{Value2}</p>
                 <Image

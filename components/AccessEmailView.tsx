@@ -93,7 +93,7 @@ const AccessEmailView = ({peopleob}:any)=>{
             </div>
         </div>
         {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.9rem] mr-6'>{value}</p> :
-                    <div className='mr-4 relative'>
+                    <div className='mr-4 relative' tabIndex={0} onBlur={() => setDropon(false)} >
                     <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre)=>!pre)}>
                         <p >{value}</p>
                         <Image
@@ -121,7 +121,7 @@ const AccessEmailView = ({peopleob}:any)=>{
                     // value='2024-06-30T13:15'
                     onChange={handleChangeDate}
                     type="datetime-local" 
-                    className='bg-[#555] border-none px-2 rounded-lg text-[0.8rem]'
+                    className='bg-[#555] border-none px-2 rounded-lg text-[0.8rem] input-date-time-picker'
                     />}
                 
             </div>}

@@ -16,7 +16,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil'
 const DropDown = ({expiration, setExpiration, value, setValue}:any)=>{
     const [dropOn, setDropon] = useState(false)
     return (
-        <div className='mr-4 relative'>
+        <div className='mr-4 relative' tabIndex={0} onBlur={() => setDropon(false)}>
             <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre=>!pre))}>
                 <p >{value}</p>
                 <Image
@@ -115,7 +115,7 @@ const SharePeople = () => {
                 setShareemail("")
             }}
         />
-        <p className='text-[1.2rem] font-medium ml-3'>Share "sfdfgdfg"</p>
+        <p className='text-[1.2rem] font-medium ml-3'>Share "{currentdocumentob.documentName}"</p>
         </div>
         {myrole === 'owner' && <Image
             src="/settings.png"

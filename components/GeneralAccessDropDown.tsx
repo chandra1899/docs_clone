@@ -27,7 +27,7 @@ const GeneralAccessDropDown = ()=>{
         }
     }
     return (
-        <div className='mr-4 relative'>
+        <div className='mr-4 relative' tabIndex={0} onBlur={() => setDrop1(false)}>
             <div className='flex flex-row justify-start items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDrop1((pre:any)=>!pre)}>
                 <p className='ml-2' >{Value1}</p>
                 <Image

@@ -152,3 +152,7 @@ button:hover .ql-fill,
 .ql-picker-options {
   background-color: #231c1c !important;
 }
+
+.input-date-time-picker::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}

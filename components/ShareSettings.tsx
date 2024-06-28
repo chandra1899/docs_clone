@@ -46,7 +46,7 @@ const ShareSettings = () => {
                         setSsettingson(false)
                     }}
                 />
-                <p className='text-[1.2rem] font-medium ml-3'>Settings for "sfdfgdfg"</p>
+                <p className='text-[1.2rem] font-medium ml-3'>Settings for "{currdocument.documentName}"</p>
             </div>
       </div>
       <div className='ml-4 mt-3'>

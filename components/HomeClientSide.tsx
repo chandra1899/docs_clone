@@ -83,7 +83,7 @@ const HomeClientSide = ({initialData, sessionData} : any) => {
       <p className="text-red-600 hover:text-red-700 cursor-pointer">Sign Out</p>
     </div>
     <div className="flex flex-row justify-center items-center  rounded-full h-[80%] w-[60px] bg-[#6029e1] mr-5 text-[1.5rem] font-mono">
-      f
+      {session?.user?.name && session?.user?.name[0]}
     </div>
       </div>
       <div>

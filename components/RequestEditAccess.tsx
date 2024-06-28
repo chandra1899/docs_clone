@@ -31,7 +31,7 @@ const RequestEditAccess = () => {
   }
   return (
     <div >
-      <p className='text-[1.25rem] font-medium'>Ask owner to be an editor for ‘Untitled fghj’</p>
+      <p className='text-[1.25rem] font-medium'>Ask owner to be an editor for ‘{currentdocumentob.documentName}’</p>
       <textarea 
       value={msg}
       onChange={(e)=>setMsg(e.target.value)}

@@ -33,15 +33,20 @@ const ShareHome = () => {
     const setShareemail=useSetRecoilState(shareemail)
     const setSharehomeon=useSetRecoilState(sharehomeon)
     const myrole = useRecoilValue(yourrole)
+    const [copied, setCopied] = useState(false)
     const handleCopiedClick=()=>{
         navigator.clipboard.writeText(`http://localhost:8000/document/${id}`);
+        setCopied(true)
+        setTimeout(() => {
+          setCopied(false)
+        }, 200)
       }
       
     
   return (
     <div className='pl-4'>
       <div className='h-[35px] flex justify-between items-center'>
-        <p className='text-[1.7rem] font-medium'>Share "sfdfgdfg"</p>
+        <p className='text-[1.7rem] font-medium'>Share "{currentdocumentob.documentName}"</p>
         {myrole === 'owner' && <Image
         src="/settings.png"
         width={35}
@@ -107,15 +112,21 @@ const ShareHome = () => {
       <GeneralAccess />
 
       <div className='flex flex-row justify-between items-center mx-2'>
-        <div className='flex flex-row justify-center items-center border-2 border-blue-600 rounded-l-full rounded-r-full p-1 px-3 h-[40px] hover:bg-slate-800 cursor-pointer my-4' onClick={handleCopiedClick} >
-            <Image
+        <div className={`flex flex-row justify-center items-center border-2 border-blue-600 rounded-l-full rounded-r-full p-1 px-3 h-[40px] w-[130px] ${!copied?'hover:bg-slate-800':''} cursor-pointer my-4`} onClick={handleCopiedClick} >
+            {!copied && <Image
                     src="/link.png"
                     width={28}
                     height={28}
                     alt="copy link"
                     // className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
-                />
-            <p className='font-medium ml-2 text-[0.9rem]'>Copy link</p>
+                />}
+            {!copied && <p className='font-medium ml-2 text-[0.9rem]'>Copy link</p>}
+            {copied && <Image
+                    src="/tick.png"
+                    width={28}
+                    height={28}
+                    alt="copied link"
+                />}
         </div>
         <p className='bg-blue-600 hover:bg-blue-700 cursor-pointer h-[40px] w-[80px] rounded-l-full rounded-r-full flex justify-center items-center font-medium' onClick={()=>{setSharehomeon(false)}}>Done</p>
       </div>

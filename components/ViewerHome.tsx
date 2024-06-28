@@ -63,8 +63,8 @@ const ViewerHome = () => {
   }
   return (
     <div>
-        {ask ? <p className='text-[1.3rem] font-medium'>Ask owner to share ‘Untitled fghj’</p>:
-        <p className='text-[1.3rem] font-medium'>Send the link for ‘Untitled fghj’</p>}
+        {ask ? <p className='text-[1.3rem] font-medium'>Ask owner to share ‘{currentdocumentob.documentName}’</p>:
+        <p className='text-[1.3rem] font-medium'>Send the link for ‘{currentdocumentob.documentName}’</p>}
         {ask ? <p className='text-[0.75rem] font-normal text-slate-300 my-2'>You're a viewer and can't manage access</p>:
         <p className='text-[0.75rem] font-normal text-slate-300 my-2'>You'll send an email with the link from below</p>}
         <input 

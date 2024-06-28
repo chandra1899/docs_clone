@@ -197,13 +197,6 @@ const getDocumentDetails = async ()=>{
         getDocumentDetails()
     },[session])
 
-    // useEffect(() => {
-    //   if(!session) return ;
-    //     setTimeout(() => {
-    //       setRenderEditor(true)
-    //     }, 2000)
-    // }, [session])
-
     return (
         <>
         {allowedtoview ? <div className='bg-slate-800'>
@@ -290,7 +283,7 @@ const getDocumentDetails = async ()=>{
                     <p className='mt-1'>Share</p>
                 </div>
             <div className="flex flex-row justify-center items-center rounded-full h-[80%] w-[60px] bg-[#6029e1] mx-6 text-[1.5rem] font-mono">
-                  {session?.user?.name[0]}
+                  {session?.user?.name && session?.user?.name[0]}
         </div>
             </div>
           </div>
