@@ -1,5 +1,5 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 import { DocumentClientSide, NotFound } from "@/components"
+import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth"
 import Link from "next/link"
 
