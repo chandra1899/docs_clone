@@ -79,7 +79,9 @@ const AccessEmailView = ({peopleob}:any)=>{
                 <p className='text-[0.8rem] font-normal text-blue-800'>{peopleob?.user?.email}</p>
             </div>
         </div>
-        {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.9rem] mr-6'>{value}</p> :
+        
+        {// @ts-ignore
+        (myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.9rem] mr-6'>{value}</p> :
                     <div className='mr-4 relative' tabIndex={0} onBlur={() => setDropon(false)} >
                     <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre)=>!pre)}>
                         <p >{value}</p>
@@ -102,7 +104,9 @@ const AccessEmailView = ({peopleob}:any)=>{
         </div>
            {expiration && <div className='flex flex-row justify-center items-center'>
                 <p className='text-[0.8rem] font-normal mr-2'>access expires</p>
-                {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.7rem] ml-3'>{expirationDate}</p> :
+                // @ts-ignore
+                {// @ts-ignore
+                (myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.7rem] ml-3'>{expirationDate}</p> :
                     <input 
                     value={expirationDate}
                     // value='2024-06-30T13:15'

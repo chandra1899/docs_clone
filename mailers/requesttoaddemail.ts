@@ -7,7 +7,7 @@ const Requesttoaddemail = async (from:string, to:string, msg: string, roomName :
             to: to,
             subject: `${from} request to add email`,
             html: `
-            <p>${from} request you to share <a href='http://localhost:8000/document/${roomName}'>Document</a> to email ${email}</p>            
+            <p>${from} request you to share <a href='${process.env.NEXTJS_URL}/document/${roomName}'>Document</a> to email ${email}</p>            
             <h2>Message</h2>
             <p>${msg}</p>
             `

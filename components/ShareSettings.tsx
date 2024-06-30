@@ -17,7 +17,9 @@ const ShareSettings = () => {
     const setSsettingson=useSetRecoilState(sharesettingson)
     const sprevopen=useRecoilValue(shareprevopen)
     const currdocument=useRecoilValue(currentdocument)
+    // @ts-ignore
     const [s1, setS1] = useState(currdocument?.settings?.s1)
+    // @ts-ignore
     const [s2, setS2] = useState(currdocument?.settings?.s2)
     const handlechange =async (s1:Boolean, s2:Boolean)=>{
       let res = await axios.post('/api/changesettings',{
@@ -45,7 +47,8 @@ const ShareSettings = () => {
                         setSsettingson(false)
                     }}
                 />
-                <p className='text-[1.2rem] font-medium ml-3'>Settings for "{currdocument.documentName}"</p>
+                <p className='text-[1.2rem] font-medium ml-3'>Settings for "{// @ts-ignore
+                currdocument.documentName}"</p>
             </div>
       </div>
       <div className='ml-4 mt-3'>

@@ -7,7 +7,7 @@ const Requesteditaccess = async (from:string, to:string, msg: string, roomName :
             to: to,
             subject: `${from} requested for edit access`,
             html: `
-            <p>${from} requested you to provide edit access to <a href='http://localhost:8000/document/${roomName}'>Document</a> </p>            
+            <p>${from} requested you to provide edit access to <a href='${process.env.NEXTJS_URL}/document/${roomName}'>Document</a> </p>            
             <h2>Message</h2>
             <p>${msg}</p>
             `

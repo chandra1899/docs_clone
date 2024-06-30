@@ -30,7 +30,9 @@ const DropDown = ({expiration, setExpiration, value, setValue}:any)=>{
             {dropOn && <div className='z-10 absolute flex flex-col justify-center items-center p-4 bg-slate-800 ml-9 rounded-lg text-[0.8rem] w-[160px]'>
                 <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setValue('Viewer');setDropon(false)}}>Viewer</p>
                 <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{setValue('Editor');setDropon(false)}}>Editor</p>
-                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setExpiration((pre)=>!pre);setDropon(false)}}>{expiration?`Remove Expiration`:`Add Expiration`}</p>
+                <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setExpiration(
+                  // @ts-ignore
+                  (pre)=>!pre);setDropon(false)}}>{expiration?`Remove Expiration`:`Add Expiration`}</p>
             </div>}
         </div>
     )
@@ -81,9 +83,12 @@ const SharePeople = () => {
         let insert = res?.data?.people
         setCurrentdocument((prev)=>{
           const updatedPrev = {
+            // @ts-ignore
             ...prev,
             share: {
-                ...prev.share,
+              // @ts-ignore
+              ...prev.share,
+              // @ts-ignore
                 peoplewithaccess: [...prev.share.peoplewithaccess, insert]
             }
         }; 
@@ -112,7 +117,8 @@ const SharePeople = () => {
                 setShareemail("")
             }}
         />
-        <p className='text-[1.2rem] font-medium ml-3'>Share "{currentdocumentob.documentName}"</p>
+        <p className='text-[1.2rem] font-medium ml-3'>Share "{// @ts-ignore
+        currentdocumentob.documentName}"</p>
         </div>
         {myrole === 'owner' && <Image
             src="/settings.png"

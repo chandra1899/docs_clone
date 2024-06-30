@@ -27,7 +27,9 @@ const ShareBox = () => {
       {(myrole === 'Editor' || myrole === 'owner') && shomeon && <ShareHome/>}
       {speopleaddon && <SharePeople/>}
       {myrole === 'owner' && ssettingson && <ShareSettings/>}
-      {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) && svieweron && <ViewerHome/>}
+
+      {// @ts-ignore
+      (myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) && svieweron && <ViewerHome/>}
       {requestedit && <RequestEditAccess/>}
     </div>
   )

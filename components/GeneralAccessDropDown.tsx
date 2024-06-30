@@ -15,7 +15,7 @@ const GeneralAccessDropDown = ()=>{
     const  setValue2 = useSetRecoilState(resValue2)
     const [drop1, setDrop1] = useRecoilState(dropOn1)
     const setDrop2 = useSetRecoilState(dropOn2)
-    const handlechange =async (generalaccessValue:String, generalaccessRole:String)=>{
+    const handlechange =async (generalaccessValue:string, generalaccessRole:string)=>{
         let res = await axios.post('/api/homechange',{
             generalaccessValue, generalaccessRole, roomName
         })

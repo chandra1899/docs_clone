@@ -18,7 +18,7 @@ import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 
 const DocumentClientSide = ({initialData, sessionData} : any) => {
     const [modeDropOn, setModeDropOn] = useState(false)
@@ -36,7 +36,7 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
   const currentdocumentob=useRecoilValue(currentdocument)
   const [allowedtoview, setAllowedtoview] = useRecoilState(allowedToView)
   const [myrole, setMyrole] = useRecoilState(yourrole)
-  const [socket, setSocket] = useState();
+  const [socket, setSocket] = useState<null | Socket>(null);
   const {status,data:session} =useSession()
   const router = useRouter();
   const {id} = useParams()
@@ -56,14 +56,16 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
   }
   
   useEffect(()=>{
-    const s = io("http://localhost:3001/");
+    const s = io(`${process.env.SOCKET_SERVER}`);
     setSocket(s)
     return ()=>{
       s.disconnect()
     }
   }, [])
   useEffect(()=>{
+    // @ts-ignore
     setValue1(currentdocumentob?.share?.generalaccess?.value)
+    // @ts-ignore
     setValue2(currentdocumentob?.share?.generalaccess?.role)
 },[currentdocumentob])
 

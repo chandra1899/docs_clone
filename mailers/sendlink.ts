@@ -8,7 +8,7 @@ const SendLink = async (from:string, to:string, msg: string, roomName : string)=
             subject: `${from} Shared a File Link`,
             html: `
             <h3>Open</h3>
-            <a href='http://localhost:8000/document/${roomName}'>link</a>
+            <a href='${process.env.NEXTJS_URL}/document/${roomName}'>link</a>
             <h2>Message</h2>
             <p>${msg}</p>
             `
