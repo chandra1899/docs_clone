@@ -56,7 +56,7 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
   }
   
   useEffect(()=>{
-    const s = io(`${process.env.SOCKET_SERVER}`);
+    const s = io(`https://docs-socket-server.onrender.com/`);
     setSocket(s)
     return ()=>{
       s.disconnect()
