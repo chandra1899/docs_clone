@@ -2,7 +2,28 @@
 
 import { atom } from 'recoil'
 
-export const currentdocument = atom({
-    key: 'currentdocument',
-    default:undefined
+interface User {
+    name : string,
+    email : string
+}
+
+export interface CurrentDcoumentType {
+  documentName : string,
+  ownedBy : User,
+  roomName : string,
+  settings : {
+    s1 : boolean,
+    s2 : boolean
+  },
+  share : {
+    generalaccess : {
+      role : string,
+      value : string
+    }
+  }
+}
+
+export const currentdocument = atom<CurrentDcoumentType | undefined>({
+    key : 'currentdocument',
+    default : undefined
   });

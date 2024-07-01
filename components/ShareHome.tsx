@@ -12,7 +12,7 @@ import {  useRecoilValue, useSetRecoilState } from 'recoil'
 import { AccessEmailView, GeneralAccess } from '.'
 import { yourrole } from '@/store/atoms/yourrole'
 import { sharevieweron } from '@/store/atoms/sharevieweron'
-import { peoplewithaccess } from '@/store/atoms/peoplewithaccess'
+import { PersonwithAccess, peoplewithaccess } from '@/store/atoms/peoplewithaccess'
 
 
 
@@ -42,8 +42,7 @@ const ShareHome = () => {
     <div className='pl-4'>
       <div className='h-[35px] flex justify-between items-center'>
         <p className='text-[1.7rem] font-medium'>Share "{
-        // @ts-ignore
-        currentdocumentob.documentName}"</p>
+        currentdocumentob?.documentName}"</p>
         {myrole === 'owner' && <Image
         src="/settings.png"
         width={35}
@@ -63,7 +62,6 @@ const ShareHome = () => {
         />
         <button className='h-[40px] w-[50px] flex justify-center items-center bg-green-600 hover:bg-green-700 rounded-lg mx-4' onClick={()=>{
           setSharehomeon(false)
-          // @ts-ignore
           if(myrole === 'Editor' && currentdocumentob?.settings.s1 === false){
             setSharevieweron(true)
           }
@@ -86,14 +84,11 @@ const ShareHome = () => {
         <div className='flex flex-col '>
             <div className='flex flex-row justify-between items-center'>
             <div className='flex flex-row justify-start items-center my-2'>
-            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{// @ts-ignore
-            currentdocumentob?.ownedBy?.name
+            <div className='h-[35px] w-[35px] flex justify-center items-center rounded-full bg-[#fb9c2f] text-[1.3rem] mr-3'>{currentdocumentob?.ownedBy.name
 [0]}</div>
             <div >
-                <p className='text-[0.95rem] text-violet-600'>{// @ts-ignore
-                currentdocumentob?.ownedBy?.name}</p>
-                <p className='text-[0.8rem] font-normal text-blue-800'>{// @ts-ignore
-                currentdocumentob?.ownedBy?.email}</p>
+                <p className='text-[0.95rem] text-violet-600'>{currentdocumentob?.ownedBy.name}</p>
+                <p className='text-[0.8rem] font-normal text-blue-800'>{currentdocumentob?.ownedBy.email}</p>
             </div>
         </div>
         <div className='mr-4 relative'>
@@ -104,7 +99,7 @@ const ShareHome = () => {
         </div>
            
         </div>
-        {pwithaccess.map((peopleob:any)=>(
+        {pwithaccess.map((peopleob : PersonwithAccess)=>(
             <AccessEmailView peopleob = {peopleob} />
         ))}
       </div>

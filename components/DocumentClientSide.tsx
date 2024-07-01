@@ -1,8 +1,8 @@
 "use client"
 import { BackDrop, Editor, RequestDocumentAccess, ShareBox } from '@/components';
 import { allowedToView } from '@/store/atoms/allowedToView';
-import { currentdocument } from '@/store/atoms/currentdocument';
-import { peoplewithaccess } from '@/store/atoms/peoplewithaccess';
+import { CurrentDcoumentType, currentdocument } from '@/store/atoms/currentdocument';
+import { PersonwithAccess, peoplewithaccess } from '@/store/atoms/peoplewithaccess';
 import { requestediton } from '@/store/atoms/requestediton';
 import { resValue1 } from '@/store/atoms/resValue1';
 import { resValue2 } from '@/store/atoms/resValue2';
@@ -20,9 +20,22 @@ import { useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import { Socket, io } from "socket.io-client";
 
-const DocumentClientSide = ({initialData, sessionData} : any) => {
-    const [modeDropOn, setModeDropOn] = useState(false)
-  const [currDocMode, setCurrDocMode] = useState('Edit')
+interface Props {
+  initialData : {
+    document : CurrentDcoumentType,
+    getpeoplewithaccess : PersonwithAccess[]
+  },
+  sessionData : {
+    user : {
+      name : string,
+      email : string
+    }
+  }
+}
+
+const DocumentClientSide = ({initialData, sessionData} : Props) => {
+    const [modeDropOn, setModeDropOn] = useState<boolean>(false)
+  const [currDocMode, setCurrDocMode] = useState<string>('Edit')
   const setPwithaccess = useSetRecoilState(peoplewithaccess)
   const setValue1 = useSetRecoilState(resValue1)
   const setValue2 = useSetRecoilState(resValue2)
@@ -40,15 +53,14 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
   const {status,data:session} =useSession()
   const router = useRouter();
   const {id} = useParams()
-  const [documentName, setDocumentName] = useState('');
+  const [documentName, setDocumentName] = useState<string>('');
   const documentNameRef = useRef(documentName);
   const setCurrentDocument = useSetRecoilState(currentdocument)
   const setRequestedit = useSetRecoilState(requestediton)
   const requestedit=useRecoilValue(requestediton)
-  const [initialRender, setInitialRender] = useState(0)
+  const [initialRender, setInitialRender] = useState<number>(0)
 
-  const findInPeople = (arr:any)=>{
-    if(arr === undefined) return -1
+  const findInPeople = (arr:PersonwithAccess[])=>{
     for(let i=0;i<arr.length;i++){
       if(arr[i].user.email === session?.user?.email) return i
     }
@@ -64,10 +76,9 @@ const DocumentClientSide = ({initialData, sessionData} : any) => {
     }
   }, [])
   useEffect(()=>{
-    // @ts-ignore
-    setValue1(currentdocumentob?.share?.generalaccess?.value)
-    // @ts-ignore
-    setValue2(currentdocumentob?.share?.generalaccess?.role)
+    if(currentdocumentob == undefined) return 
+    setValue1(currentdocumentob.share.generalaccess.value)
+    setValue2(currentdocumentob.share.generalaccess.role)
 },[currentdocumentob])
 
 const checkExpiration = (date : string) : Boolean => {
@@ -116,6 +127,7 @@ const getDocumentDetails = async ()=>{
 
   useEffect(() => {
     if(initialRender >= 2) return ;
+    
     setDocumentName(initialData.document.documentName)
     setPwithaccess(initialData.getpeoplewithaccess)
     setCurrentDocument(initialData.document)
@@ -123,16 +135,14 @@ const getDocumentDetails = async ()=>{
     let ind = -1
     let arr = initialData.getpeoplewithaccess
     
-    if(arr !== undefined) {
       for(let i=0;i<arr.length;i++){
-        if(arr[i].user.email === sessionData?.user?.email){
+        if(arr[i].user.email === sessionData.user.email){
           ind = i
           break ;
         }
       }
-    }
     
-    if((sessionData && initialData.document?.ownedBy?.email === sessionData?.user?.email) || initialData.document?.share?.generalaccess?.value === "AnyOne with link"){
+    if((sessionData && initialData.document.ownedBy.email === sessionData.user.email) || initialData.document.share.generalaccess.value === "AnyOne with link"){
       setAllowedtoview(true)
     }
     else if(ind !== -1 && (!initialData.getpeoplewithaccess[ind].expirationOn || (initialData.getpeoplewithaccess[ind].expirationOn && checkExpiration(initialData.getpeoplewithaccess[ind].expirationDate)))){
@@ -141,13 +151,13 @@ const getDocumentDetails = async ()=>{
     else{
       setAllowedtoview(false)
     }
-    if(initialData.document?.share?.generalaccess?.value !== "Restricted"){
-      setMyrole(initialData.document?.share?.generalaccess?.role)
+    if(initialData.document.share.generalaccess.value !== "Restricted"){
+      setMyrole(initialData.document.share.generalaccess.role)
     }
-    if(ind !== -1 && initialData.document?.share?.generalaccess?.role !== 'Editor'){
+    if(ind !== -1 && initialData.document.share.generalaccess.role !== 'Editor'){
       setMyrole(initialData.getpeoplewithaccess[ind].role)
     }
-    if(initialData.document?.ownedBy?.email === sessionData?.user?.email){
+    if(initialData.document.ownedBy.email === sessionData.user.email){
       setMyrole('owner')
     }
   }, [])

@@ -12,7 +12,7 @@ import * as React from 'react';
 
 export default function LoginForm(){
   const router=useRouter()
-  const [isLoading,setIsLoading]=useState(false)
+  const [isLoading,setIsLoading]=useState<boolean>(false)
   const [form,setForm]=useState({
     email:'',
     password:'',

@@ -4,8 +4,13 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 import DocOptions from './DocOptions'
+import { YourDocuments } from '@/store/atoms/yourDocuments'
 
-const Doc = ({document}:any) => {  
+interface Props {
+  document : YourDocuments
+}
+
+const Doc = ({document}:Props) => {  
   const {status,data:session} =useSession()
   const router = useRouter();
   return (
@@ -21,7 +26,7 @@ const Doc = ({document}:any) => {
       />
       <p>{document?.documentName}</p>
       </div>
-      <p>{(document?.ownedBy===session?.user?.email)?'me':`${session?.user?.email}`}</p>
+      <p>{(document?.ownedBy.email === session?.user?.email)?'me':`${session?.user?.email}`}</p>
       <p>{document?.updatedAt}</p>
       <DocOptions roomName = {document?.roomName} />
     </div>

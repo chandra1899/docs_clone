@@ -17,7 +17,7 @@ const ViewerHome = () => {
   const currentdocumentob = useRecoilValue(currentdocument)
   const {data:session} = useSession()
   const {id} = useParams()
-  const [ask, setAsk] = useState(false)
+  const [ask, setAsk] = useState<boolean>(false)
   const [semail, setEmail]=useRecoilState(shareemail)
   const setSvieweron = useSetRecoilState(sharevieweron)
   const setSharevieweron = useSetRecoilState(sharevieweron)
@@ -45,7 +45,6 @@ const ViewerHome = () => {
     try {
       let res = await axios.post('/api/asktosharefile',{
         from : session?.user?.email,
-        // @ts-ignore
         to : currentdocumentob?.ownedBy.email,
         msg, 
         roomName : id,
@@ -63,10 +62,8 @@ const ViewerHome = () => {
   return (
     <div>
         {ask ? <p className='text-[1.3rem] font-medium'>Ask owner to share ‘{
-          // @ts-ignore
-        currentdocumentob.documentName}’</p>:
-        <p className='text-[1.3rem] font-medium'>Send the link for ‘{// @ts-ignore
-          currentdocumentob.documentName}’</p>}
+        currentdocumentob?.documentName}’</p>:
+        <p className='text-[1.3rem] font-medium'>Send the link for ‘{currentdocumentob?.documentName}’</p>}
         {ask ? <p className='text-[0.75rem] font-normal text-slate-300 my-2'>You're a viewer and can't manage access</p>:
         <p className='text-[0.75rem] font-normal text-slate-300 my-2'>You'll send an email with the link from below</p>}
         <input 

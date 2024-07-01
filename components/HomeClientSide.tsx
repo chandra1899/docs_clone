@@ -1,7 +1,7 @@
 "use client"
 import { YourDocs } from "@/components";
 import { currentdocument } from "@/store/atoms/currentdocument";
-import { yourDocuments } from "@/store/atoms/yourDocuments";
+import { YourDocuments, yourDocuments } from "@/store/atoms/yourDocuments";
 import axios from "axios";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
@@ -9,7 +9,21 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useSetRecoilState } from "recoil";
 
-const HomeClientSide = ({initialData, sessionData} : any) => {
+interface Props {
+  initialData : {
+    documents : YourDocuments[]
+  },
+  sessionData : {
+    user : {
+      name : string,
+      email : string
+    }
+  }
+}
+
+const HomeClientSide = ({initialData, sessionData} : Props) => {
+  console.log('initialData', initialData);
+  
     const {status,data:session} =useSession()
   const setYourDocuments=useSetRecoilState(yourDocuments)
   if(initialData.documents != undefined){

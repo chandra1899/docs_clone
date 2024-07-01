@@ -13,8 +13,15 @@ import { useParams } from 'next/navigation'
 import React, { useState } from 'react'
 import { useRecoilValue, useSetRecoilState } from 'recoil'
 
-const DropDown = ({expiration, setExpiration, value, setValue}:any)=>{
-    const [dropOn, setDropon] = useState(false)
+interface Props2 {
+    expiration : boolean,
+    setExpiration : React.Dispatch<React.SetStateAction<boolean>>,
+    value : string,
+    setValue : React.Dispatch<React.SetStateAction<string>>
+}
+
+const DropDown = ({expiration, setExpiration, value, setValue}:Props2)=>{
+    const [dropOn, setDropon] = useState<boolean>(false)
     return (
         <div className='mr-4 relative' tabIndex={0} onBlur={() => setDropon(false)}>
             <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre=>!pre))}>
@@ -31,7 +38,6 @@ const DropDown = ({expiration, setExpiration, value, setValue}:any)=>{
                 <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setValue('Viewer');setDropon(false)}}>Viewer</p>
                 <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center border-b-2 border-blue-800 pb-2' onClick={()=>{setValue('Editor');setDropon(false)}}>Editor</p>
                 <p className='my-1 cursor-pointer hover:bg-slate-700 w-[100%] p-1 flex justify-center items-center' onClick={()=>{setExpiration(
-                  // @ts-ignore
                   (pre)=>!pre);setDropon(false)}}>{expiration?`Remove Expiration`:`Add Expiration`}</p>
             </div>}
         </div>
@@ -51,9 +57,9 @@ const SharePeople = () => {
     const semail = useRecoilValue(shareemail)
     const myrole = useRecoilValue(yourrole)
     const {id} = useParams()
-    const [notifyOn, setNotifyOn] = useState(true)
-    const [role, setRole] = useState("Viewer")
-    const [expiration, setExpiration] = useState(true)
+    const [notifyOn, setNotifyOn] = useState<boolean>(true)
+    const [role, setRole] = useState<string>("Viewer")
+    const [expiration, setExpiration] = useState<boolean>(true)
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let tomorrowISOString = tomorrow.toISOString().slice(0, 16);
@@ -81,6 +87,7 @@ const SharePeople = () => {
       })
       if(res.status === 200 && res?.data?.people != undefined){
         let insert = res?.data?.people
+        // @ts-ignore
         setCurrentdocument((prev)=>{
           const updatedPrev = {
             // @ts-ignore
@@ -117,8 +124,7 @@ const SharePeople = () => {
                 setShareemail("")
             }}
         />
-        <p className='text-[1.2rem] font-medium ml-3'>Share "{// @ts-ignore
-        currentdocumentob.documentName}"</p>
+        <p className='text-[1.2rem] font-medium ml-3'>Share "{currentdocumentob?.documentName}"</p>
         </div>
         {myrole === 'owner' && <Image
             src="/settings.png"

@@ -11,7 +11,7 @@ import * as React from 'react';
 
 export default function RegisterForm(){
   const router=useRouter()
-    const [isLoading,setIsLoading]=useState(false)
+    const [isLoading,setIsLoading]=useState<boolean>(false)
     const [form,setForm]=useState({
         name:'',
         email:'',

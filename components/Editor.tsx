@@ -6,13 +6,15 @@ import 'quill/dist/quill.snow.css';
 import { useRecoilValue } from 'recoil';
 import { yourrole } from '@/store/atoms/yourrole';
 import ReactQuill from 'react-quill';
+import { DeltaStatic } from 'quill';
+import { Sources } from 'quill';
 
 const Editor = ({socket, currDocMode}:any) => {
     const myRole = useRecoilValue(yourrole)
     const {id} = useParams()
     const editor = useRef<ReactQuill>(null)
-    const [connectionEstablished, setConnectionEstablished] = useState(false)
-    const [openToolBar, setOpenToolBar] = useState(false)
+    const [connectionEstablished, setConnectionEstablished] = useState<boolean>(false)
+    const [openToolBar, setOpenToolBar] = useState<boolean>(false)
   const [triggerInitialisation, setTriggerInitialisation] = useState<null | number>(null);
 
     const saveDocument = async () => {
@@ -94,7 +96,7 @@ const Editor = ({socket, currDocMode}:any) => {
 
       useEffect(() => {
         if(socket == null || editor.current == null || connectionEstablished == false) return ;
-          const handler = (delta: any) => {
+          const handler = (delta: DeltaStatic) => {
             editor.current?.getEditor().updateContents(delta)
           }
           socket.on("receive-changes", handler)
@@ -142,7 +144,7 @@ const Editor = ({socket, currDocMode}:any) => {
         }
       }, [currDocMode, socket, editor.current, connectionEstablished])
 
-      const handleOnChange = (content : string, delta : any, source : any, presentEditor : ReactQuill.UnprivilegedEditor) => {
+      const handleOnChange = (content : string, delta : DeltaStatic, source : Sources , presentEditor : ReactQuill.UnprivilegedEditor) => {
           if(connectionEstablished == false || source !== 'user' || socket == null || editor.current == null) return ;
           socket.emit('send-changes', delta)
       }

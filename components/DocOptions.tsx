@@ -4,7 +4,7 @@ import Image from 'next/image'
 import axios from 'axios'
 
 const DocOptions = ({roomName} : any) => {    
-    const [modeDropOn, setModeDropOn] = useState(false)
+    const [modeDropOn, setModeDropOn] = useState<boolean>(false)
     const handleDeleteDoc =async (e : any) => {
         try {
             let res = await axios.post('/api/deletedocument',{

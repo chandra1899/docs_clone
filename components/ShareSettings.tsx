@@ -17,11 +17,9 @@ const ShareSettings = () => {
     const setSsettingson=useSetRecoilState(sharesettingson)
     const sprevopen=useRecoilValue(shareprevopen)
     const currdocument=useRecoilValue(currentdocument)
-    // @ts-ignore
-    const [s1, setS1] = useState(currdocument?.settings?.s1)
-    // @ts-ignore
-    const [s2, setS2] = useState(currdocument?.settings?.s2)
-    const handlechange =async (s1:Boolean, s2:Boolean)=>{
+    const [s1, setS1] = useState<boolean | undefined>(currdocument?.settings.s1)
+    const [s2, setS2] = useState(currdocument?.settings.s2)
+    const handlechange =async (s1:boolean | undefined, s2:boolean |  undefined)=>{
       let res = await axios.post('/api/changesettings',{
         s1, s2, roomName
       })

@@ -6,12 +6,17 @@ import Image from 'next/image'
 import { useParams } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { useRecoilValue } from 'recoil'
+import { PersonwithAccess } from '@/store/atoms/peoplewithaccess'
 
-const AccessEmailView = ({peopleob}:any)=>{
-    const [dropOn, setDropon] = useState(false)
-    const [value, setValue] = useState(peopleob.role)
-    const [expiration, setExpiration] = useState(peopleob.expirationOn)
-    const [expirationDate, setExpirationDate] = useState(peopleob.expirationDate)
+interface Props {
+    peopleob : PersonwithAccess
+}
+
+const AccessEmailView = ({peopleob} : Props)=>{
+    const [dropOn, setDropon] = useState<boolean>(false)
+    const [value, setValue] = useState<string>(peopleob.role)
+    const [expiration, setExpiration] = useState<boolean>(peopleob.expirationOn)
+    const [expirationDate, setExpirationDate] = useState<string>(peopleob.expirationDate)
     const {id : roomName} = useParams()
     const myrole = useRecoilValue(yourrole)
     const currentdocumentob=useRecoilValue(currentdocument)
@@ -23,7 +28,7 @@ const AccessEmailView = ({peopleob}:any)=>{
         const formattedDateTime = tomorrow.toISOString().slice(0, 16);
         return formattedDateTime;
     }
-    const handleChangeDate =async (e:any)=>{
+    const handleChangeDate =async (e : React.ChangeEvent<HTMLInputElement>)=>{
         const currentDate = new Date().toISOString().slice(0, 16);
         if(e.target.value <= currentDate) return 
         let res = await axios.post('/api/sharepeoplechange',{
@@ -33,7 +38,7 @@ const AccessEmailView = ({peopleob}:any)=>{
             setExpirationDate(res.data.expirationDate)
         }
     }
-    const handlechange =async  (role : String)=>{
+    const handlechange =async  (role : string)=>{
         let res = await axios.post('/api/sharepeoplechange',{
             role, _id : peopleob._id, expirationOn : expiration, expirationDate
         })
@@ -57,7 +62,7 @@ const AccessEmailView = ({peopleob}:any)=>{
             if(!expiration) {                
                 setExpirationDate(expireDate)
             }
-            setExpiration((pre:any)=>!pre)
+            setExpiration((pre)=>!pre)
             setDropon(false)
         }
     }
@@ -80,8 +85,7 @@ const AccessEmailView = ({peopleob}:any)=>{
             </div>
         </div>
         
-        {// @ts-ignore
-        (myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.9rem] mr-6'>{value}</p> :
+        {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings.s1 === false)) ? <p className='text-slate-300 text-[0.9rem] mr-6'>{value}</p> :
                     <div className='mr-4 relative' tabIndex={0} onBlur={() => setDropon(false)} >
                     <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:bg-slate-800 p-2 text-[0.9rem]' onClick={()=>setDropon((pre)=>!pre)}>
                         <p >{value}</p>
@@ -104,9 +108,7 @@ const AccessEmailView = ({peopleob}:any)=>{
         </div>
            {expiration && <div className='flex flex-row justify-center items-center'>
                 <p className='text-[0.8rem] font-normal mr-2'>access expires</p>
-                // @ts-ignore
-                {// @ts-ignore
-                (myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings?.s1 === false)) ? <p className='text-slate-300 text-[0.7rem] ml-3'>{expirationDate}</p> :
+                {(myrole === 'Viewer' || (myrole === 'Editor' && currentdocumentob?.settings.s1 === false)) ? <p className='text-slate-300 text-[0.7rem] ml-3'>{expirationDate}</p> :
                     <input 
                     value={expirationDate}
                     // value='2024-06-30T13:15'

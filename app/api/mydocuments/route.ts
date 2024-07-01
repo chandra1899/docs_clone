@@ -22,7 +22,11 @@ export async function POST(req:Request){
         const documents = await Document.find({
             ownedBy : user._id
             //shared with you
-        }) 
+        }).select('-content -settings -share')
+        .populate({
+            path : 'ownedBy',
+            select : "-password"
+        })
         
         return NextResponse.json({documents},{status:200})
     } catch (error) {

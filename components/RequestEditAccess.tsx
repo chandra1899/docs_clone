@@ -17,8 +17,7 @@ const RequestEditAccess = () => {
     try {
       let res = await axios.post('/api/requesteditaccess', {
         from : session?.user?.email, 
-        // @ts-ignore
-        to : currentdocumentob?.ownedBy?.email,
+        to : currentdocumentob?.ownedBy.email,
         msg,
         roomName
       })
@@ -30,12 +29,10 @@ const RequestEditAccess = () => {
       
     }
   }
-  //@ts-ignore
+  
   return (
     <div >
-      <p className='text-[1.25rem] font-medium'>Ask owner to be an editor for ‘{
-      // @ts-ignore
-      currentdocumentob.documentName}’</p>
+      <p className='text-[1.25rem] font-medium'>Ask owner to be an editor for ‘{currentdocumentob?.documentName}’</p>
       <textarea 
       value={msg}
       onChange={(e)=>setMsg(e.target.value)}
