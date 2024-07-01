@@ -27,6 +27,15 @@ export async function POST(req:Request){
         await connectMongoDB()
         let user = await User.findOne({email : parsedInput.data.email})
         if(!user) return NextResponse.json({message:'email not found'},{status:404})
+        let document = await Document.findOne({roomName : parsedInput.data.roomName}).populate('ownedBy')
+        if(user.email == document.ownedBy.email) return NextResponse.json({message:"user is the owner"},{status:411})
+        
+        let exit = await PeopleWithAccess.findOne({
+            user : user._id,
+            roomName : parsedInput.data.roomName
+        })
+        if(exit) return NextResponse.json({message:"user already added"},{status:411})
+
         let people = await PeopleWithAccess.create({
             user : user._id,
             roomName : parsedInput.data.roomName,
@@ -34,7 +43,6 @@ export async function POST(req:Request){
             expirationOn : parsedInput.data.expirationOn,
             expirationDate : parsedInput.data.expirationDate
         })
-        let document = await Document.findOne({roomName : parsedInput.data.roomName}).populate('ownedBy')
         
         if(parsedInput.data.notify) {
             Sharefile(document.ownedBy.email, parsedInput.data.email, parsedInput.data.msg, parsedInput.data.roomName)

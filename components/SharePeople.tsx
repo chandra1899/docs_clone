@@ -1,6 +1,7 @@
 "use client"
 import { currentdocument } from '@/store/atoms/currentdocument'
 import { message } from '@/store/atoms/message'
+import { peoplewithaccess } from '@/store/atoms/peoplewithaccess'
 import { shareemail } from '@/store/atoms/shareemail'
 import { sharehomeon } from '@/store/atoms/sharehomeon'
 import { sharepeopleaddon } from '@/store/atoms/sharepeopleaddon'
@@ -50,7 +51,7 @@ const SharePeople = () => {
     const setSpeopleaddon=useSetRecoilState(sharepeopleaddon)
     const setSsettingson=useSetRecoilState(sharesettingson)
     const setShareemail=useSetRecoilState(shareemail)
-    const setCurrentdocument=useSetRecoilState(currentdocument)
+    const setPeoplewithaccess=useSetRecoilState(peoplewithaccess)
     const setMsg=useSetRecoilState(message)
     const msg = useRecoilValue(message)
     const currentdocumentob = useRecoilValue(currentdocument)
@@ -87,20 +88,7 @@ const SharePeople = () => {
       })
       if(res.status === 200 && res?.data?.people != undefined){
         let insert = res?.data?.people
-        // @ts-ignore
-        setCurrentdocument((prev)=>{
-          const updatedPrev = {
-            // @ts-ignore
-            ...prev,
-            share: {
-              // @ts-ignore
-              ...prev.share,
-              // @ts-ignore
-                peoplewithaccess: [...prev.share.peoplewithaccess, insert]
-            }
-        }; 
-          return updatedPrev
-        })
+        setPeoplewithaccess((prev) => [...prev, insert])
         setShareemail("")
         setSpeopleaddon(false)
         setSharehomeon(true)
