@@ -7,7 +7,7 @@ interface Params {
   id: string;
 }
 
-const page = async ({ params } : any) => {
+const page = async ({ params } : {params : Params}) => {
   const sessionData = await getServerSession(authOptions)
 
   if (!sessionData) {
