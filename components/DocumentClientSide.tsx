@@ -13,6 +13,7 @@ import { sharesettingson } from '@/store/atoms/sharesettingson';
 import { sharevieweron } from '@/store/atoms/sharevieweron';
 import { yourrole } from '@/store/atoms/yourrole';
 import axios from 'axios';
+import { Session } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import Image from 'next/image'
 import { useParams, useRouter } from 'next/navigation';
@@ -25,12 +26,7 @@ interface Props {
     document : CurrentDcoumentType,
     getpeoplewithaccess : PersonwithAccess[]
   },
-  sessionData : {
-    user : {
-      name : string,
-      email : string
-    }
-  }
+  sessionData : Session
 }
 
 const DocumentClientSide = ({initialData, sessionData} : Props) => {
@@ -136,13 +132,13 @@ const getDocumentDetails = async ()=>{
     let arr = initialData.getpeoplewithaccess
     
       for(let i=0;i<arr.length;i++){
-        if(arr[i].user.email === sessionData.user.email){
+        if(arr[i].user.email === sessionData?.user?.email){
           ind = i
           break ;
         }
       }
     
-    if((sessionData && initialData.document.ownedBy.email === sessionData.user.email) || initialData.document.share.generalaccess.value === "AnyOne with link"){
+    if((sessionData && initialData.document.ownedBy.email === sessionData?.user?.email) || initialData.document.share.generalaccess.value === "AnyOne with link"){
       setAllowedtoview(true)
     }
     else if(ind !== -1 && (!initialData.getpeoplewithaccess[ind].expirationOn || (initialData.getpeoplewithaccess[ind].expirationOn && checkExpiration(initialData.getpeoplewithaccess[ind].expirationDate)))){
@@ -157,7 +153,7 @@ const getDocumentDetails = async ()=>{
     if(ind !== -1 && initialData.document.share.generalaccess.role !== 'Editor'){
       setMyrole(initialData.getpeoplewithaccess[ind].role)
     }
-    if(initialData.document.ownedBy.email === sessionData.user.email){
+    if(initialData.document.ownedBy.email === sessionData?.user?.email){
       setMyrole('owner')
     }
   }, [])

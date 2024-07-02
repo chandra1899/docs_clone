@@ -26,9 +26,9 @@ const Doc = ({document}:Props) => {
       />
       <p>{document?.documentName}</p>
       </div>
-      <p>{(document?.ownedBy.email === session?.user?.email)?'me':`${session?.user?.email}`}</p>
+      <p>{(document?.ownedBy.email === session?.user?.email)?'me':`${document.ownedBy.email}`}</p>
       <p>{document?.updatedAt}</p>
-      <DocOptions roomName = {document?.roomName} />
+      <DocOptions roomName = {document?.roomName} ownerEmail = {document.ownedBy.email} />
     </div>
   )
 }

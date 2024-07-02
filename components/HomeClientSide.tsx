@@ -3,6 +3,7 @@ import { YourDocs } from "@/components";
 import { currentdocument } from "@/store/atoms/currentdocument";
 import { YourDocuments, yourDocuments } from "@/store/atoms/yourDocuments";
 import axios from "axios";
+import { Session } from "next-auth";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -13,12 +14,7 @@ interface Props {
   initialData : {
     documents : YourDocuments[]
   },
-  sessionData : {
-    user : {
-      name : string,
-      email : string
-    }
-  }
+  sessionData : Session
 }
 
 const HomeClientSide = ({initialData, sessionData} : Props) => {

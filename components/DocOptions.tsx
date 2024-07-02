@@ -2,8 +2,15 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import axios from 'axios'
+import { useSession } from 'next-auth/react'
 
-const DocOptions = ({roomName} : any) => {    
+interface Props {
+    roomName : string,
+    ownerEmail : string
+}
+
+const DocOptions = ({roomName, ownerEmail} : Props) => {    
+    const {data: session} = useSession()
     const [modeDropOn, setModeDropOn] = useState<boolean>(false)
     const handleDeleteDoc =async (e : any) => {
         try {
@@ -21,7 +28,7 @@ const DocOptions = ({roomName} : any) => {
   return (
     <div className='mr-3 relative' tabIndex={0} onBlur={() => setModeDropOn(false)
     } >
-                <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:text-blue-600 p-2 text-[0.9rem]' onClick={()=>{setModeDropOn((pre:any)=>!pre)}}>
+                <div className='flex flex-row justify-center items-center cursor-pointer rounded-lg hover:text-blue-600 p-2 text-[0.9rem]' onClick={()=>{setModeDropOn((pre)=>!pre)}}>
                     <Image
                         src="/dot_menu.png"
                         width={28}
@@ -30,7 +37,7 @@ const DocOptions = ({roomName} : any) => {
                         className="cursor-pointer hover:bg-slate-800 rounded-full p-1"
                     />
                 </div>
-                {modeDropOn && <div className='absolute flex flex-col justify-center items-center bg-black top-5 left-11 rounded-lg text-[0.8rem] w-[90px] border-[1px] border-slate-600 '>
+                {modeDropOn && ownerEmail === session?.user?.email && <div className='absolute flex flex-col justify-center items-center bg-black top-5 left-11 rounded-lg text-[0.8rem] w-[90px] border-[1px] border-slate-600 '>
                 <div className='flex flex-row justify-center items-center w-[100%] rounded-lg hover:bg-slate-900' onClick={handleDeleteDoc} >
                         <div className='flex justify-center items-center h-[30px] w-[30px]'>
                             {<Image

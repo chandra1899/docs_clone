@@ -1,13 +1,18 @@
 import { HomeClientSide } from "@/components";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
+import Link from "next/link";
 
 export default async function Home() {
   const sessionData = await getServerSession(authOptions)
 
   if (!sessionData) {
-    redirect('/api/auth/signin');
+    return <div className="flex flex-row justify-center items-center mt-4">
+      <p>Please Login Here</p>
+      <Link href={`${process.env.NEXTJS_URL}/api/auth/signin`}>
+        <p className="text-blue-600 hover:text-blue-700 cursor-pointer">SignIn</p>
+      </Link>
+    </div>
   }
   let initialData ;
   try {
