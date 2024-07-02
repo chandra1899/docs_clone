@@ -6,8 +6,8 @@ import 'quill/dist/quill.snow.css';
 import { useRecoilValue } from 'recoil';
 import { yourrole } from '@/store/atoms/yourrole';
 import ReactQuill from 'react-quill';
-import { DeltaStatic } from 'quill';
-import { Sources } from 'quill';
+import DeltaStatic from "quill"
+import Sources from "quill"
 
 const Editor = ({socket, currDocMode}:any) => {
     const myRole = useRecoilValue(yourrole)

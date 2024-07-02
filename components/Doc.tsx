@@ -15,19 +15,19 @@ const Doc = ({document}:Props) => {
   const router = useRouter();
   return (
     <div className='flex flex-row items-center justify-between w-[800px] text-[0.8rem] font-normal my-1 h-[40px] hover:bg-slate-900 rounded-l-full rounded-r-full' >
-      <div className='flex flex-row items-center justify-center w-[300px] cursor-pointer' 
+      <div className='flex flex-row items-center justify-start w-[220px] cursor-pointer' 
       onClick={()=>{router.push(`/document/${document?.roomName}`)}} >
       <Image
         src="/docs_img.png"
         width={28}
         height={28}
         alt="docs_img"
-        className="mr-9"
+        className="mr-5"
       />
       <p>{document?.documentName}</p>
       </div>
-      <p>{(document?.ownedBy.email === session?.user?.email)?'me':`${document.ownedBy.email}`}</p>
-      <p>{document?.updatedAt}</p>
+      <p className='w-[220px] flex items-center justify-center'>{(document?.ownedBy.email === session?.user?.email)?'me':`${document.ownedBy.email}`}</p>
+      <p className='w-[220px] flex items-center justify-center'>{document?.updatedAt}</p>
       <DocOptions roomName = {document?.roomName} ownerEmail = {document.ownedBy.email} />
     </div>
   )

@@ -17,10 +17,8 @@ interface Props {
   sessionData : Session
 }
 
-const HomeClientSide = ({initialData, sessionData} : Props) => {
-  console.log('initialData', initialData);
-  
-    const {status,data:session} =useSession()
+const HomeClientSide = ({initialData, sessionData} : Props) => {  
+  const {status,data:session} =useSession()
   const setYourDocuments=useSetRecoilState(yourDocuments)
   if(initialData.documents != undefined){
     setYourDocuments(initialData.documents)
