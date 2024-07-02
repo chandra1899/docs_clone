@@ -3,7 +3,7 @@ import { useState } from "react"
 import { FormEventHandler, KeyboardEventHandler } from 'react';
 import Link  from 'next/link'
 import axios from 'axios';
-import {useRouter} from 'next/navigation'
+import {redirect, useRouter} from 'next/navigation'
 //spinner
 import * as React from 'react';
 // import CircularProgress from '@mui/material/CircularProgress';
@@ -31,6 +31,9 @@ export default function RegisterForm(){
               let form =e.target as HTMLFormElement
                 form.reset()
                 router.replace('/login')
+            }
+            else if(res.status === 409){
+              router.replace('/login')
             }
             
         } catch (error) {
