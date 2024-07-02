@@ -6,8 +6,6 @@ import 'quill/dist/quill.snow.css';
 import { useRecoilValue } from 'recoil';
 import { yourrole } from '@/store/atoms/yourrole';
 import ReactQuill from 'react-quill';
-import DeltaStatic from "quill"
-import Sources from "quill"
 
 const Editor = ({socket, currDocMode}:any) => {
     const myRole = useRecoilValue(yourrole)
@@ -96,7 +94,7 @@ const Editor = ({socket, currDocMode}:any) => {
 
       useEffect(() => {
         if(socket == null || editor.current == null || connectionEstablished == false) return ;
-          const handler = (delta: DeltaStatic) => {
+          const handler = (delta: any) => {
             editor.current?.getEditor().updateContents(delta)
           }
           socket.on("receive-changes", handler)
@@ -144,7 +142,7 @@ const Editor = ({socket, currDocMode}:any) => {
         }
       }, [currDocMode, socket, editor.current, connectionEstablished])
 
-      const handleOnChange = (content : string, delta : DeltaStatic, source : Sources , presentEditor : ReactQuill.UnprivilegedEditor) => {
+      const handleOnChange = (content : string, delta : any, source : any , presentEditor : ReactQuill.UnprivilegedEditor) => {
           if(connectionEstablished == false || source !== 'user' || socket == null || editor.current == null) return ;
           socket.emit('send-changes', delta)
       }
